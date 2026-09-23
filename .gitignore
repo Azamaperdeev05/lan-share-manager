@@ -1,0 +1,26 @@
+## [Visual Studio / .NET .gitignore]
+**/[Bb]in/
+**/[Oo]bj/
+.vs/
+*.user
+*.userosscache
+*.suo
+*.userprefs
+*.dbmdl
+*.jfm
+*.pfx
+*.publishsettings
+
+# Test Results
+TestResults/
+*.trx
+*.coverage
+*.coveragexml
+
+# Publish artifacts (we will upload them to GitHub Releases instead of git tracking)
+publish/
+
+# OS generated
+.DS_Store
+Thumbs.db
+desktop.ini

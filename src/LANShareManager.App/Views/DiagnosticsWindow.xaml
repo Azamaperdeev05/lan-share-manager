@@ -1,0 +1,93 @@
+<Window x:Class="LANShareManager.App.Views.DiagnosticsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Диагностика подключения общего ресурса" 
+        Height="550" Width="680"
+        WindowStartupLocation="CenterOwner"
+        Background="{StaticResource BgBrush}"
+        FontFamily="Segoe UI, Inter, Arial"
+        FontSize="13">
+
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <StackPanel Grid.Row="0" Margin="0,0,0,16">
+            <TextBlock x:Name="TxtTitle" Text="Диагностика сетевого ресурса" FontSize="18" FontWeight="Bold" Foreground="{StaticResource TextPrimaryBrush}" />
+            <TextBlock Text="Проверка всех уровней стека: служба SMB, прослушивание порта 445, брандмауэр, списки ACL и доступность сетевых путей." FontSize="13" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,4,0,0" TextWrapping="Wrap" />
+        </StackPanel>
+
+        <!-- Diagnostic List -->
+        <Border Grid.Row="1" Style="{StaticResource CardBorder}" Padding="0">
+            <ListView x:Name="ListDiagnostics" BorderThickness="0" Background="Transparent" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <Border BorderBrush="{StaticResource CardBorderBrush}" BorderThickness="0,0,0,1" Padding="12,10">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="32" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+
+                                <!-- Status Symbol -->
+                                <TextBlock Grid.Column="0" Text="{Binding StatusSymbol}" FontWeight="Bold" FontSize="16" VerticalAlignment="Top" Margin="0,2,0,0">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Status}" Value="Success">
+                                                    <Setter Property="Foreground" Value="{StaticResource SuccessBrush}" />
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding Status}" Value="Warning">
+                                                    <Setter Property="Foreground" Value="#D88700" />
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding Status}" Value="Failure">
+                                                    <Setter Property="Foreground" Value="{StaticResource DangerBrush}" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+
+                                <!-- Details -->
+                                <StackPanel Grid.Column="1">
+                                    <TextBlock Text="{Binding Name}" FontWeight="SemiBold" FontSize="14" Foreground="{StaticResource TextPrimaryBrush}" />
+                                    <TextBlock Text="{Binding Details}" Margin="0,2,0,0" TextWrapping="Wrap" Foreground="{StaticResource TextSecondaryBrush}" />
+                                    
+                                    <Border Background="#FFF9E6" BorderBrush="#FFE499" BorderThickness="1" CornerRadius="4" Padding="8" Margin="0,6,0,0">
+                                        <Border.Style>
+                                            <Style TargetType="Border">
+                                                <Setter Property="Visibility" Value="Visible" />
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding SuggestedFix}" Value="{x:Null}">
+                                                        <Setter Property="Visibility" Value="Collapsed" />
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding SuggestedFix}" Value="">
+                                                        <Setter Property="Visibility" Value="Collapsed" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Border.Style>
+                                        <StackPanel>
+                                            <TextBlock Text="Рекомендация по исправлению:" FontWeight="SemiBold" Foreground="#8A5A00" FontSize="12" />
+                                            <TextBlock Text="{Binding SuggestedFix}" TextWrapping="Wrap" Foreground="#5C3B00" FontSize="12" Margin="0,2,0,0" />
+                                        </StackPanel>
+                                    </Border>
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </Border>
+
+        <!-- Footer -->
+        <Grid Grid.Row="2" Margin="0,16,0,0">
+            <Button Content="Копировать отчет" Style="{StaticResource SecondaryButton}" Height="34" HorizontalAlignment="Left" Click="BtnCopyReport_Click" />
+            <Button Content="Закрыть" Style="{StaticResource PrimaryButton}" Width="100" Height="34" HorizontalAlignment="Right" IsCancel="True" Click="BtnClose_Click" />
+        </Grid>
+    </Grid>
+</Window>

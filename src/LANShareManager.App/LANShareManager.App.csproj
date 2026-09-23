@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <RootNamespace>LANShareManager.App</RootNamespace>
+    <AssemblyName>LANShareManagerGUI</AssemblyName>
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\LANShareManager.Core\LANShareManager.Core.csproj" />
+    <ProjectReference Include="..\LANShareManager.Infrastructure\LANShareManager.Infrastructure.csproj" />
+  </ItemGroup>
+</Project>

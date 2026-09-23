@@ -1,0 +1,57 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{9CC76491-7512-48FB-ACB8-F01C619C4EF7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LANShareManager.Core", "src\LANShareManager.Core\LANShareManager.Core.csproj", "{4F1D5477-8B65-4AE2-A0E8-F8FDDAAE3BD3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LANShareManager.Infrastructure", "src\LANShareManager.Infrastructure\LANShareManager.Infrastructure.csproj", "{2D71D108-23D9-405D-BCEF-EB27A4ED802F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LANShareManager.CLI", "src\LANShareManager.CLI\LANShareManager.CLI.csproj", "{3C5F359E-DA1E-4786-8CCB-3FC0C3FDD630}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LANShareManager.App", "src\LANShareManager.App\LANShareManager.App.csproj", "{B7D0C506-DE00-4663-97C5-2B1C5F2309D7}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{EADACDB2-DC52-4B36-A315-C546F0D99DFF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LANShareManager.Tests", "tests\LANShareManager.Tests\LANShareManager.Tests.csproj", "{666CD68F-38B0-425B-976B-3F5BE5EF1698}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4F1D5477-8B65-4AE2-A0E8-F8FDDAAE3BD3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4F1D5477-8B65-4AE2-A0E8-F8FDDAAE3BD3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4F1D5477-8B65-4AE2-A0E8-F8FDDAAE3BD3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4F1D5477-8B65-4AE2-A0E8-F8FDDAAE3BD3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2D71D108-23D9-405D-BCEF-EB27A4ED802F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2D71D108-23D9-405D-BCEF-EB27A4ED802F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2D71D108-23D9-405D-BCEF-EB27A4ED802F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2D71D108-23D9-405D-BCEF-EB27A4ED802F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3C5F359E-DA1E-4786-8CCB-3FC0C3FDD630}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3C5F359E-DA1E-4786-8CCB-3FC0C3FDD630}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3C5F359E-DA1E-4786-8CCB-3FC0C3FDD630}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3C5F359E-DA1E-4786-8CCB-3FC0C3FDD630}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B7D0C506-DE00-4663-97C5-2B1C5F2309D7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B7D0C506-DE00-4663-97C5-2B1C5F2309D7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B7D0C506-DE00-4663-97C5-2B1C5F2309D7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B7D0C506-DE00-4663-97C5-2B1C5F2309D7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{666CD68F-38B0-425B-976B-3F5BE5EF1698}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{666CD68F-38B0-425B-976B-3F5BE5EF1698}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{666CD68F-38B0-425B-976B-3F5BE5EF1698}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{666CD68F-38B0-425B-976B-3F5BE5EF1698}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{4F1D5477-8B65-4AE2-A0E8-F8FDDAAE3BD3} = {9CC76491-7512-48FB-ACB8-F01C619C4EF7}
+		{2D71D108-23D9-405D-BCEF-EB27A4ED802F} = {9CC76491-7512-48FB-ACB8-F01C619C4EF7}
+		{3C5F359E-DA1E-4786-8CCB-3FC0C3FDD630} = {9CC76491-7512-48FB-ACB8-F01C619C4EF7}
+		{B7D0C506-DE00-4663-97C5-2B1C5F2309D7} = {9CC76491-7512-48FB-ACB8-F01C619C4EF7}
+		{666CD68F-38B0-425B-976B-3F5BE5EF1698} = {EADACDB2-DC52-4B36-A315-C546F0D99DFF}
+	EndGlobalSection
+EndGlobal

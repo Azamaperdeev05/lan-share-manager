@@ -1,0 +1,142 @@
+<Window x:Class="LANShareManager.App.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="LAN Share Manager — Управление общими папками SMB" 
+        Height="680" Width="960"
+        MinHeight="550" MinWidth="780"
+        WindowStartupLocation="CenterScreen"
+        Background="{StaticResource BgBrush}"
+        FontFamily="Segoe UI, Inter, Arial"
+        FontSize="13">
+
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <!-- Header bar -->
+            <RowDefinition Height="Auto" />
+            <!-- Network info card -->
+            <RowDefinition Height="Auto" />
+            <!-- Action bar & shares title -->
+            <RowDefinition Height="Auto" />
+            <!-- Shares DataGrid/List -->
+            <RowDefinition Height="*" />
+            <!-- Selected share action buttons & status -->
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!-- 1. Header Bar -->
+        <Grid Grid.Row="0" Margin="0,0,0,16">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Grid.Column="0">
+                <TextBlock Text="LAN Share Manager" FontSize="22" FontWeight="Bold" Foreground="{StaticResource TextPrimaryBrush}" />
+                <TextBlock Text="Автоматизированное создание и управление сетевыми папками SMB для Windows" FontSize="13" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,2,0,0" />
+            </StackPanel>
+
+            <!-- Admin Privilege Badge -->
+            <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                <Border x:Name="AdminBadgeBorder" Background="{StaticResource SuccessBgBrush}" CornerRadius="6" Padding="10,5">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock x:Name="TxtAdminStatus" Text="✓ Администратор: Активен" Foreground="{StaticResource SuccessBrush}" FontWeight="SemiBold" FontSize="12" />
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </Grid>
+
+        <!-- 2. Network Info Card -->
+        <Border Grid.Row="1" Style="{StaticResource CardBorder}" Margin="0,0,0,16">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0">
+                    <TextBlock Text="Имя компьютера (Host):" Foreground="{StaticResource TextSecondaryBrush}" FontSize="12" />
+                    <TextBlock x:Name="TxtComputerName" Text="Загрузка..." FontWeight="Bold" FontSize="14" Foreground="{StaticResource TextPrimaryBrush}" Margin="0,2,0,0" />
+                </StackPanel>
+
+                <StackPanel Grid.Column="1">
+                    <TextBlock Text="Локальный IPv4 (LAN):" Foreground="{StaticResource TextSecondaryBrush}" FontSize="12" />
+                    <TextBlock x:Name="TxtLocalIp" Text="Определение..." FontWeight="Bold" FontSize="14" Foreground="{StaticResource PrimaryBrush}" Margin="0,2,0,0" />
+                </StackPanel>
+
+                <StackPanel Grid.Column="2">
+                    <TextBlock Text="Профиль сети:" Foreground="{StaticResource TextSecondaryBrush}" FontSize="12" />
+                    <TextBlock x:Name="TxtNetworkProfile" Text="Определение..." FontWeight="Bold" FontSize="14" Foreground="{StaticResource TextPrimaryBrush}" Margin="0,2,0,0" />
+                </StackPanel>
+
+                <StackPanel Grid.Column="3" Orientation="Horizontal" VerticalAlignment="Center">
+                    <Button x:Name="BtnSwitchPrivate" Content="Сделать сеть частной" Style="{StaticResource SecondaryButton}" Height="30" Margin="0,0,8,0" Visibility="Collapsed" Click="BtnSwitchPrivate_Click" />
+                    <Button x:Name="BtnRefreshNetwork" Content="Обновить" Style="{StaticResource SecondaryButton}" Height="30" Click="BtnRefreshNetwork_Click" />
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- 3. Shares Section Title & Create Button -->
+        <Grid Grid.Row="2" Margin="0,0,0,10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                <TextBlock Text="Сетевые ресурсы (SMB Shares):" FontSize="16" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}" />
+            </StackPanel>
+
+            <StackPanel Grid.Column="1" Orientation="Horizontal">
+                <CheckBox x:Name="ChkShowAdminShares" Content="Показать служебные (C$, ADMIN$)" VerticalAlignment="Center" Margin="0,0,14,0" Checked="ChkShowAdminShares_Changed" Unchecked="ChkShowAdminShares_Changed" />
+                <Button x:Name="BtnCreateNewShare" Content="+ Создать общий доступ" Style="{StaticResource PrimaryButton}" Height="36" Padding="18,0" Click="BtnCreateNewShare_Click" />
+            </StackPanel>
+        </Grid>
+
+        <!-- 4. Shares Grid -->
+        <Border Grid.Row="3" Style="{StaticResource CardBorder}" Padding="0" Margin="0,0,0,14">
+            <DataGrid x:Name="GridShares" AutoGenerateColumns="False" IsReadOnly="True" 
+                      SelectionMode="Single" HeadersVisibility="Column"
+                      GridLinesVisibility="Horizontal" HorizontalGridLinesBrush="#EFEFEF"
+                      RowHeight="38" Background="Transparent" BorderThickness="0"
+                      SelectionChanged="GridShares_SelectionChanged"
+                      MouseDoubleClick="GridShares_MouseDoubleClick">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Имя ресурса" Binding="{Binding Name}" Width="160" FontWeight="SemiBold" />
+                    <DataGridTextColumn Header="Локальный путь" Binding="{Binding Path}" Width="*" />
+                    <DataGridTextColumn Header="Уровень доступа" Binding="{Binding DisplayAccess}" Width="150" />
+                    <DataGridTextColumn Header="Статус" Binding="{Binding Status}" Width="100" />
+                </DataGrid.Columns>
+            </DataGrid>
+        </Border>
+
+        <!-- 5. Actions Bar & Status -->
+        <Grid Grid.Row="4">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <!-- Actions for Selected Share -->
+            <StackPanel Grid.Column="0" Orientation="Horizontal">
+                <Button x:Name="BtnOpenFolder" Content="Открыть папку" Style="{StaticResource SecondaryButton}" Height="34" Margin="0,0,8,0" IsEnabled="False" Click="BtnOpenFolder_Click" />
+                <Button x:Name="BtnCopyPath" Content="Копировать путь" Style="{StaticResource SecondaryButton}" Height="34" Margin="0,0,8,0" IsEnabled="False" Click="BtnCopyPath_Click" />
+                <Button x:Name="BtnEditAccess" Content="Изменить доступ" Style="{StaticResource SecondaryButton}" Height="34" Margin="0,0,8,0" IsEnabled="False" Click="BtnEditAccess_Click" />
+                <Button x:Name="BtnDiagnostics" Content="Диагностика" Style="{StaticResource SecondaryButton}" Height="34" Margin="0,0,8,0" IsEnabled="False" Click="BtnDiagnostics_Click" />
+                <Button x:Name="BtnRemoveShare" Content="Удалить" Style="{StaticResource DangerButton}" Height="34" IsEnabled="False" Click="BtnRemoveShare_Click" />
+            </StackPanel>
+
+            <!-- Status Message -->
+            <TextBlock x:Name="TxtStatus" Grid.Column="1" Text="Готово" VerticalAlignment="Center" Foreground="{StaticResource TextSecondaryBrush}" Margin="16,0" TextTrimming="CharacterEllipsis" />
+
+            <!-- Utility Buttons -->
+            <StackPanel Grid.Column="2" Orientation="Horizontal">
+                <Button Content="Экспорт..." Style="{StaticResource SecondaryButton}" Height="34" Margin="0,0,8,0" Click="BtnExport_Click" />
+                <Button Content="Импорт..." Style="{StaticResource SecondaryButton}" Height="34" Margin="0,0,8,0" Click="BtnImport_Click" />
+                <Button Content="Журнал логов" Style="{StaticResource SecondaryButton}" Height="34" Click="BtnOpenLogs_Click" />
+            </StackPanel>
+        </Grid>
+    </Grid>
+</Window>
