@@ -14,10 +14,39 @@ if (-not $args) {
     $psv = (Get-Host).Version.Major
     $repoUrl = 'https://github.com/Azamaperdeev05/lan-share-manager'
 
+    function Show-RemediationBox ($title, $failurePoint, $cause, $steps, $quickCommand) {
+        Write-Host
+        Write-Host "╔══════════════════════════════════════════════════════════════════════════════╗" -ForegroundColor Red
+        Write-Host "║ ❌ ҚАТЕ АНЫҚТАЛҒАН ОРЫН (ТОЧКА СБОЯ): $failurePoint" -ForegroundColor Red
+        Write-Host "╠══════════════════════════════════════════════════════════════════════════════╣" -ForegroundColor Red
+        Write-Host "║ ⚠️  Атауы:   $title" -ForegroundColor Yellow
+        Write-Host "║ 🔍 Не болды: $cause" -ForegroundColor Gray
+        Write-Host "║"
+        Write-Host "║ 💡 АЛДЫМЕН МЫНАНЫ ДҰРЫСТАҢЫЗ (СНАЧАЛА ИСПРАВЬТЕ ЭТО):" -ForegroundColor Cyan
+        $i = 1
+        foreach ($step in $steps) {
+            Write-Host "║    [$i] $step" -ForegroundColor White
+            $i++
+        }
+        if ($quickCommand) {
+            Write-Host "║"
+            Write-Host "║ ⌨️  Шұғыл пәрмен (Быстрая команда):" -ForegroundColor Green
+            Write-Host "║    $quickCommand" -ForegroundColor White
+        }
+        Write-Host "╚══════════════════════════════════════════════════════════════════════════════╝" -ForegroundColor Red
+        Write-Host
+    }
+
     # 1. Check PowerShell Language Mode
     if ($ExecutionContext.SessionState.LanguageMode.value__ -ne 0) {
-        Write-Host "PowerShell is not running in Full Language Mode ($($ExecutionContext.SessionState.LanguageMode))." -ForegroundColor Red
-        Write-Host "Run PowerShell as a standard user or disable ConstrainedLanguage mode." -ForegroundColor Yellow
+        Show-RemediationBox `
+            -title "PowerShell Constrained Language Mode белсенді" `
+            -failurePoint "PowerShell қауіпсіздік саясаты (Language Mode)" `
+            -cause "Жүйелік саясат немесе AppLocker сценарийлерді шектеулі режимде орындауды талап етуде." `
+            -steps @(
+                "PowerShell терезесін қарапайым пайдаланушы ретінде ашып қайталап көріңіз.",
+                "Немесе әкімшіден осы терминал сессиясы үшін ConstrainedLanguage шектеуін алуды сұраңыз."
+            )
         return
     }
 
@@ -27,8 +56,14 @@ if (-not $args) {
         [void][System.Math]::Sqrt(144)
     }
     catch {
-        Write-Host "Error: $($_.Exception.Message)" -ForegroundColor Red
-        Write-Host "PowerShell failed to execute standard .NET commands." -ForegroundColor Yellow
+        Show-RemediationBox `
+            -title "PowerShell .NET ортасына қол жеткізе алмады" `
+            -failurePoint "PowerShell .NET CLR ортасы" `
+            -cause $_.Exception.Message `
+            -steps @(
+                "PowerShell нұсқасын тексеріңіз (Windows PowerShell 5.1 немесе PowerShell 7+ ұсынылады).",
+                "Компьютерді қайта қосып көріңіз."
+            )
         return
     }
 
@@ -59,11 +94,11 @@ if (-not $args) {
 
     # Ensure TLS 1.2 / TLS 1.3
     try {
-        [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+        [Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12
     } catch {}
 
     # 5. Pinned SHA-256 Hash and Mirrors
-    $expectedHash = '9538ACCE142E3C4354E708163C200A731D95AC6937C17AD7B847DEB59C265533'
+    $expectedHash = 'E3C04F7D0D8213CBDB674CD8F7E5B14C03D25A5315AF3AC6F82A4E4A1068B79C'
 
     $mirrors = @(
         'https://github.com/Azamaperdeev05/lan-share-manager/releases/download/v1.0.0/LANShareManager-v1.0.0-win-x64.zip',
@@ -102,10 +137,15 @@ if (-not $args) {
     Write-Progress -Activity "Downloading LAN Share Manager..." -Status "Completed" -Completed
 
     if (-not $downloadSuccess -or -not (Test-Path $tempZip)) {
-        Write-Host "Failed to download LAN Share Manager from available mirrors." -ForegroundColor Red
-        foreach ($err in $errors) {
-            Write-Host "Error: $($err.Exception.Message)" -ForegroundColor DarkRed
-        }
+        Show-RemediationBox `
+            -title "Пакетті серверден жүктеу мүмкін болмады" `
+            -failurePoint "Интернет байланысы / Репозиторий" `
+            -cause "Қолжетімді mirror-серверлерге қосылу сәтсіз аяқталды." `
+            -steps @(
+                "Интернет байланысын тексеріңіз.",
+                "GitHub-тың қолжетімді екенін шолғыштан тексеріңіз (https://github.com/Azamaperdeev05/lan-share-manager).",
+                "Сыртқы антивирустың жүктеуді бұғаттамағанына көз жеткізіңіз."
+            )
         return
     }
 
@@ -117,13 +157,20 @@ if (-not $args) {
 
     if ($computedHash -ne $expectedHash) {
         Write-Host "FAILED!" -ForegroundColor Red
-        Write-Warning "Security hash mismatch!`nExpected: $expectedHash`nReceived: $computedHash`nAborting execution for safety."
+        Show-RemediationBox `
+            -title "Қауіпсіздік хэші сәйкес келмеді (Hash Mismatch)" `
+            -failurePoint "Пакеттің тұтастығын тексеру (SHA-256)" `
+            -cause "Күтілген хэш: $expectedHash`nАлынған хэш: $computedHash" `
+            -steps @(
+                "Жүктелген файл бүлінген болуы мүмкін. Пәрменді қайта іске қосыңыз.",
+                "Прокси немесе жергілікті желідегі антивирусты тексеріңіз."
+            )
         Remove-Item -Path $tempZip -Force -ErrorAction SilentlyContinue
         return
     }
     Write-Host "OK (Hash Verified ✓)" -ForegroundColor Green
 
-    # 7. Unpack and Execute with Elevation (RunAs)
+    # 7. Unpack and Execute
     try {
         Write-Host "Extracting application to temporary workspace... " -NoNewline
         New-Item -ItemType Directory -Path $tempExtract -Force | Out-Null
@@ -152,12 +199,21 @@ if (-not $args) {
 
         if (-not $unzipped) {
             Write-Host "FAILED!" -ForegroundColor Red
-            Write-Error "Could not extract ZIP archive using any available extractor."
+            Show-RemediationBox `
+                -title "ZIP мұрағатын ашу мүмкін болмады" `
+                -failurePoint "Файлдық жүйе / Декомпрессия" `
+                -cause "Windows ортасындағы барлық 3 декомпрессия әдісі сәтсіз аяқталды." `
+                -steps @(
+                    "Дискіде бос орын бар екенін тексеріңіз.",
+                    "%TEMP% папкасына жазу рұқсатын тексеріңіз."
+                )
             return
         }
         Write-Host "OK" -ForegroundColor Green
 
         $guiExe = "$tempExtract\LANShareManagerGUI.exe"
+        $cliExe = "$tempExtract\LANShareManager.exe"
+
         if (-not (Test-Path $guiExe)) {
             Write-Host "Executable LANShareManagerGUI.exe not found in package." -ForegroundColor Red
             return
@@ -229,19 +285,46 @@ if (-not $args) {
             }
         }
 
-        Write-Host "Launching LAN Share Manager with Administrator privileges..." -ForegroundColor Cyan
+        # 8. Interactive Mode Selector or Direct Launch
         $isAdmin = [bool]([Security.Principal.WindowsIdentity]::GetCurrent().Groups -match 'S-1-5-32-544')
+        $launchMode = 'GUI'
 
-        if ($isAdmin) {
-            $proc = Start-Process -FilePath $guiExe -PassThru
-            $proc.WaitForExit()
+        if ($args -contains '-cli' -or $args -contains '--cli' -or $args -contains '-menu' -or $args -contains '--menu') {
+            $launchMode = 'CLI'
+        } elseif (-not [Console]::IsInputRedirected) {
+            Write-Host
+            Write-Host " МӘЗІР: Қай режимде іске қосамыз? (Выберите режим):" -ForegroundColor White
+            Write-Host " [1] Графикалық терезе (WPF GUI) [Enter - Әдепкі]" -ForegroundColor Green
+            Write-Host " [2] Терминалдағы интерактивті шебер (CLI Wizard)" -ForegroundColor Cyan
+            Write-Host
+            $choice = Read-Host " Таңдауыңыз [1/2, Әдепкі 1]"
+            if ($choice -eq '2') {
+                $launchMode = 'CLI'
+            }
+        }
+
+        if ($launchMode -eq 'CLI' -and (Test-Path $cliExe)) {
+            Write-Host "Терминалда интерактивті шебер іске қосылуда..." -ForegroundColor Cyan
+            if ($isAdmin) {
+                & $cliExe
+            } else {
+                Write-Host "Әкімші құқықтарымен жаңа консоль терезесі ашылуда..." -ForegroundColor Yellow
+                $proc = Start-Process -FilePath $cliExe -Verb RunAs -PassThru
+                $proc.WaitForExit()
+            }
         } else {
-            $proc = Start-Process -FilePath $guiExe -Verb RunAs -PassThru
-            $proc.WaitForExit()
+            Write-Host "Launching LAN Share Manager with Administrator privileges..." -ForegroundColor Cyan
+            if ($isAdmin) {
+                $proc = Start-Process -FilePath $guiExe -PassThru
+                $proc.WaitForExit()
+            } else {
+                $proc = Start-Process -FilePath $guiExe -Verb RunAs -PassThru
+                $proc.WaitForExit()
+            }
         }
     }
     finally {
-        # 8. Clean up temporary files completely
+        # 9. Clean up temporary files completely
         Write-Host "Cleaning up temporary files... " -NoNewline
         Remove-Item -Path $tempZip -Force -ErrorAction SilentlyContinue
         Remove-Item -Path $tempExtract -Recurse -Force -ErrorAction SilentlyContinue

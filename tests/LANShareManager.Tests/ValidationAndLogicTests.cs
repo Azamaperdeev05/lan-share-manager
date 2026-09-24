@@ -196,4 +196,56 @@ public class ValidationAndLogicTests
         Assert.Equal(AccessMode.ReadOnly.ToString(), deserialized[1].Access);
         Assert.False(deserialized[1].Firewall);
     }
+
+    [Fact]
+    public void RemediationAdvisor_UnauthorizedAccess_ReturnsUacAdminGuidance()
+    {
+        var ex = new UnauthorizedAccessException("Access is denied to SMB resources.");
+        var report = LANShareManager.Core.Diagnostics.RemediationAdvisor.Analyze(ex.Message, ex);
+
+        Assert.Equal("UAC_ADMIN", report.CategoryKey);
+        Assert.NotEmpty(report.RemediationSteps);
+        Assert.Contains("Administrator", report.ErrorTitle);
+        Assert.Contains("Запуск от имени администратора", report.RemediationSteps[1]);
+    }
+
+    [Fact]
+    public void RemediationAdvisor_LanmanServerStopped_ReturnsLanmanWithAutoFix()
+    {
+        var report = LANShareManager.Core.Diagnostics.RemediationAdvisor.Analyze("The server service is not started (LanmanServer)");
+
+        Assert.Equal("LANMAN_SERVICE", report.CategoryKey);
+        Assert.True(report.CanAutoFix);
+        Assert.Equal("net start LanmanServer", report.QuickCommand);
+    }
+
+    [Fact]
+    public void RemediationAdvisor_PublicNetwork_ReturnsNetworkPublicWithAutoFix()
+    {
+        var report = LANShareManager.Core.Diagnostics.RemediationAdvisor.Analyze("Current network profile is Public (Общедоступная)");
+
+        Assert.Equal("NETWORK_PUBLIC", report.CategoryKey);
+        Assert.True(report.CanAutoFix);
+        Assert.Contains("Private", report.QuickCommand);
+    }
+
+    [Fact]
+    public void RemediationAdvisor_FirewallBlocked_ReturnsFirewallGuidance()
+    {
+        var report = LANShareManager.Core.Diagnostics.RemediationAdvisor.Analyze("Port 445 is blocked by Windows Firewall");
+
+        Assert.Equal("FIREWALL_445", report.CategoryKey);
+        Assert.True(report.CanAutoFix);
+        Assert.Contains("File and Printer Sharing", report.QuickCommand);
+    }
+
+    [Fact]
+    public void RemediationAdvisor_SystemFolder_ReturnsSystemFolderProtection()
+    {
+        var report = LANShareManager.Core.Diagnostics.RemediationAdvisor.Analyze("Запрещено создавать общий доступ к системному каталогу Windows");
+
+        Assert.Equal("SYSTEM_FOLDER", report.CategoryKey);
+        Assert.False(report.CanAutoFix);
+        Assert.Contains("C:\\Windows", report.ErrorTitle);
+    }
 }

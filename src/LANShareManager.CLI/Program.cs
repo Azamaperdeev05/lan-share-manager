@@ -3,6 +3,9 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Security.Principal;
 using System.Text;
+using LANShareManager.CLI.Helpers;
+using LANShareManager.CLI.Menu;
+using LANShareManager.Core.Diagnostics;
 using LANShareManager.Core.Enums;
 using LANShareManager.Core.Interfaces;
 using LANShareManager.Core.Models;
@@ -37,10 +40,25 @@ public class Program
 
         InitializeServices();
 
-        // Print header
+        // 1. If run without arguments, or with --menu / -i, launch full interactive wizard menu!
+        if (args.Length == 0 || args[0].Equals("--menu", StringComparison.OrdinalIgnoreCase) || args[0].Equals("-i", StringComparison.OrdinalIgnoreCase))
+        {
+            var menu = new InteractiveConsoleMenu(
+                _smbService,
+                _ntfsService,
+                _firewallService,
+                _networkService,
+                _diagnosticsService,
+                _orchestrator,
+                _serializer);
+            await menu.RunAsync();
+            return 0;
+        }
+
+        // Print header for command line execution
         PrintBanner();
 
-        if (args.Length == 0 || args[0].Equals("--help", StringComparison.OrdinalIgnoreCase) || args[0].Equals("-h", StringComparison.OrdinalIgnoreCase))
+        if (args[0].Equals("--help", StringComparison.OrdinalIgnoreCase) || args[0].Equals("-h", StringComparison.OrdinalIgnoreCase))
         {
             PrintUsage();
             return 0;
@@ -64,9 +82,18 @@ public class Program
         }
         catch (Exception ex)
         {
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine($"\n[ОШИБКА]: {ex.Message}");
-            Console.ResetColor();
+            var report = RemediationAdvisor.Analyze(ex.Message, ex, command);
+            RemediationFormatter.Print(report);
+
+            if (report.CanAutoFix)
+            {
+                await RemediationFormatter.OfferAutoFixAsync(
+                    report,
+                    _firewallService,
+                    _networkService,
+                    async () => await Task.CompletedTask);
+            }
+
             _logger.LogError($"CLI command '{command}' unhandled exception", ex);
             return 1;
         }
@@ -152,9 +179,9 @@ public class Program
         var dict = ParseArgs(args);
         if (!dict.TryGetValue("path", out var path) || !dict.TryGetValue("name", out var name))
         {
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine("Ошибка: аргументы --path и --name обязательны.");
-            Console.ResetColor();
+            var report = RemediationAdvisor.Analyze("Аргументы --path и --name обязательны.", context: "Команда 'create'");
+            RemediationFormatter.Print(report);
+            Console.WriteLine("Пример: LANShareManager create --path \"C:\\OBSHAYA\" --name \"OBSHAYA\" --access readwrite\n");
             return 1;
         }
 
@@ -191,9 +218,17 @@ public class Program
 
         if (!result.Success)
         {
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine($"✗ {result.Message}");
-            Console.ResetColor();
+            var report = RemediationAdvisor.Analyze(result.Message, context: "Ортақ ресурс жасау");
+            RemediationFormatter.Print(report);
+
+            if (report.CanAutoFix)
+            {
+                await RemediationFormatter.OfferAutoFixAsync(
+                    report,
+                    _firewallService,
+                    _networkService,
+                    async () => await Task.CompletedTask);
+            }
             return 1;
         }
 
