@@ -31,6 +31,7 @@ public class Program
 
     public static async Task<int> Main(string[] args)
     {
+        try { Encoding.RegisterProvider(CodePagesEncodingProvider.Instance); } catch { }
         Console.OutputEncoding = Encoding.UTF8;
         Console.InputEncoding = Encoding.UTF8;
 

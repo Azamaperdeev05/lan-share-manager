@@ -104,25 +104,45 @@ Get-SmbShare | Select-Object Name, Path, Description, Special | ConvertTo-Json -
             Directory.CreateDirectory(folderPath);
         }
 
+        string safeName = shareName.Replace("'", "''");
+        string safePath = folderPath.Replace("'", "''");
+        string safeDesc = (description ?? "").Replace("'", "''");
+
         bool hasCmdlets = await IsSmbSupportedAsync();
 
         if (hasCmdlets)
         {
-            string accessParam = accessMode switch
+            string accessModeWord = accessMode switch
             {
-                AccessMode.ReadOnly => "-ReadAccess 'Everyone'",
-                AccessMode.ReadWrite => "-ChangeAccess 'Everyone'",
-                AccessMode.FullControl => "-FullAccess 'Everyone'",
-                _ => "-ChangeAccess 'Everyone'"
+                AccessMode.ReadOnly => "Read",
+                AccessMode.ReadWrite => "Change",
+                AccessMode.FullControl => "Full",
+                _ => "Change"
             };
 
-            // Also grant Administrators FullAccess
+            // Dynamically resolve localized account names from universal SIDs:
+            // S-1-1-0: World / Everyone ("Все" on Russian, "Everyone" on English, "Jeder" on German)
+            // S-1-5-32-544: Builtin Administrators ("Администраторы" on Russian, "Administrators" on English)
+            // This prevents Windows System Error 1332 (ERROR_NONE_MAPPED).
             string script = $@"
-$exists = Get-SmbShare -Name '{shareName}' -ErrorAction SilentlyContinue
+$everyone = try {{ (New-Object System.Security.Principal.SecurityIdentifier('S-1-1-0')).Translate([System.Security.Principal.NTAccount]).Value }} catch {{ 'Everyone' }}
+$admins = try {{ (New-Object System.Security.Principal.SecurityIdentifier('S-1-5-32-544')).Translate([System.Security.Principal.NTAccount]).Value }} catch {{ 'Administrators' }}
+
+$exists = Get-SmbShare -Name '{safeName}' -ErrorAction SilentlyContinue
 if ($exists) {{
-    Set-SmbShare -Name '{shareName}' -Path '{folderPath}' -Description '{description}' -Force
+    Set-SmbShare -Name '{safeName}' -Path '{safePath}' -Description '{safeDesc}' -Force
 }} else {{
-    New-SmbShare -Name '{shareName}' -Path '{folderPath}' -Description '{description}' {accessParam} -FullAccess 'Administrators'
+    New-SmbShare -Name '{safeName}' -Path '{safePath}' -Description '{safeDesc}' -ErrorAction Stop
+}}
+
+# Revoke existing entries for Everyone/Все to apply clean new permission
+Revoke-SmbShareAccess -Name '{safeName}' -AccountName $everyone -Force -ErrorAction SilentlyContinue
+Revoke-SmbShareAccess -Name '{safeName}' -AccountName 'Everyone' -Force -ErrorAction SilentlyContinue
+Revoke-SmbShareAccess -Name '{safeName}' -AccountName 'Все' -Force -ErrorAction SilentlyContinue
+
+Grant-SmbShareAccess -Name '{safeName}' -AccountName $everyone -AccessRight {accessModeWord} -Force
+if ($admins) {{
+    Grant-SmbShareAccess -Name '{safeName}' -AccountName $admins -AccessRight Full -Force -ErrorAction SilentlyContinue
 }}
 ";
             var result = await _runner.RunPowerShellCommandAsync(script);
@@ -130,9 +150,6 @@ if ($exists) {{
             {
                 throw new InvalidOperationException($"Не удалось создать общий ресурс SMB '{shareName}': {result.StandardError}");
             }
-
-            // Ensure access rights are specifically updated
-            await UpdateShareAccessAsync(shareName, accessMode);
         }
         else
         {
@@ -145,9 +162,17 @@ if ($exists) {{
                 _ => "CHANGE"
             };
 
-            string netArgs = $"share \"{shareName}={folderPath}\" /GRANT:Everyone,{permArg} /REMARK:\"{description}\"";
+            string localizedEveryone = "Everyone";
+            try
+            {
+                var sid = new System.Security.Principal.SecurityIdentifier("S-1-1-0");
+                localizedEveryone = sid.Translate(typeof(System.Security.Principal.NTAccount)).Value;
+            }
+            catch { }
+
+            string netArgs = $"share \"{shareName}={folderPath}\" /GRANT:\"{localizedEveryone}\",{permArg} /REMARK:\"{description}\"";
             var res = await _runner.RunProcessAsync("net.exe", netArgs);
-            if (!res.Success && !res.StandardOutput.Contains("уже существует", StringComparison.OrdinalIgnoreCase))
+            if (!res.Success && !res.StandardOutput.Contains("уже существует", StringComparison.OrdinalIgnoreCase) && !res.StandardOutput.Contains("already exists", StringComparison.OrdinalIgnoreCase))
             {
                 throw new InvalidOperationException($"Ошибка создания ресурса net share: {res.StandardError} {res.StandardOutput}");
             }
@@ -159,6 +184,8 @@ if ($exists) {{
         _logger.LogInfo($"Updating SMB permissions for '{shareName}' to {accessMode}");
 
         bool hasCmdlets = await IsSmbSupportedAsync();
+        string safeName = shareName.Replace("'", "''");
+
         if (hasCmdlets)
         {
             string right = accessMode switch
@@ -170,9 +197,17 @@ if ($exists) {{
             };
 
             string script = $@"
-Revoke-SmbShareAccess -Name '{shareName}' -AccountName 'Everyone' -Force -ErrorAction SilentlyContinue
-Grant-SmbShareAccess -Name '{shareName}' -AccountName 'Everyone' -AccessRight {right} -Force
-Grant-SmbShareAccess -Name '{shareName}' -AccountName 'Administrators' -AccessRight Full -Force
+$everyone = try {{ (New-Object System.Security.Principal.SecurityIdentifier('S-1-1-0')).Translate([System.Security.Principal.NTAccount]).Value }} catch {{ 'Everyone' }}
+$admins = try {{ (New-Object System.Security.Principal.SecurityIdentifier('S-1-5-32-544')).Translate([System.Security.Principal.NTAccount]).Value }} catch {{ 'Administrators' }}
+
+Revoke-SmbShareAccess -Name '{safeName}' -AccountName $everyone -Force -ErrorAction SilentlyContinue
+Revoke-SmbShareAccess -Name '{safeName}' -AccountName 'Everyone' -Force -ErrorAction SilentlyContinue
+Revoke-SmbShareAccess -Name '{safeName}' -AccountName 'Все' -Force -ErrorAction SilentlyContinue
+
+Grant-SmbShareAccess -Name '{safeName}' -AccountName $everyone -AccessRight {right} -Force
+if ($admins) {{
+    Grant-SmbShareAccess -Name '{safeName}' -AccountName $admins -AccessRight Full -Force -ErrorAction SilentlyContinue
+}}
 ";
             var result = await _runner.RunPowerShellCommandAsync(script);
             if (!result.Success)
@@ -189,7 +224,16 @@ Grant-SmbShareAccess -Name '{shareName}' -AccountName 'Administrators' -AccessRi
                 AccessMode.FullControl => "FULL",
                 _ => "CHANGE"
             };
-            await _runner.RunProcessAsync("net.exe", $"share \"{shareName}\" /GRANT:Everyone,{permArg}");
+
+            string localizedEveryone = "Everyone";
+            try
+            {
+                var sid = new System.Security.Principal.SecurityIdentifier("S-1-1-0");
+                localizedEveryone = sid.Translate(typeof(System.Security.Principal.NTAccount)).Value;
+            }
+            catch { }
+
+            await _runner.RunProcessAsync("net.exe", $"share \"{shareName}\" /GRANT:\"{localizedEveryone}\",{permArg}");
         }
     }
 
@@ -198,9 +242,11 @@ Grant-SmbShareAccess -Name '{shareName}' -AccountName 'Administrators' -AccessRi
         _logger.LogInfo($"Removing SMB share '{shareName}' (underlying folder remains untouched)...");
 
         bool hasCmdlets = await IsSmbSupportedAsync();
+        string safeName = shareName.Replace("'", "''");
+
         if (hasCmdlets)
         {
-            var res = await _runner.RunPowerShellCommandAsync($"Remove-SmbShare -Name '{shareName}' -Force");
+            var res = await _runner.RunPowerShellCommandAsync($"Remove-SmbShare -Name '{safeName}' -Force");
             if (!res.Success)
             {
                 throw new InvalidOperationException($"Ошибка при удалении SMB ресурса '{shareName}': {res.StandardError}");
@@ -223,10 +269,13 @@ Grant-SmbShareAccess -Name '{shareName}' -AccountName 'Administrators' -AccessRi
         try
         {
             bool hasCmdlets = await IsSmbSupportedAsync();
+            string safeName = shareName.Replace("'", "''");
+
             if (hasCmdlets)
             {
                 string script = $@"
-Get-SmbShareAccess -Name '{shareName}' | Where-Object {{ $_.AccountName -match 'Everyone|Все|S-1-1-0' }} | Select-Object -ExpandProperty AccessRight
+$everyone = try {{ (New-Object System.Security.Principal.SecurityIdentifier('S-1-1-0')).Translate([System.Security.Principal.NTAccount]).Value }} catch {{ 'Everyone' }}
+Get-SmbShareAccess -Name '{safeName}' | Where-Object {{ $_.AccountName -match 'Everyone|Все|S-1-1-0' -or $_.AccountName -eq $everyone }} | Select-Object -ExpandProperty AccessRight
 ";
                 var res = await _runner.RunPowerShellCommandAsync(script);
                 if (res.Success && !string.IsNullOrWhiteSpace(res.StandardOutput))

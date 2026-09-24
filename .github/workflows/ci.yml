@@ -3,10 +3,10 @@ name: Build, Test and Release
 on:
   push:
     branches: [ main, master ]
-    tags:
-      - 'v*'
-  pull_request:
-    branches: [ main, master ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
   build:
@@ -37,8 +37,23 @@ jobs:
     - name: Publish CLI (win-x64)
       run: dotnet publish src/LANShareManager.CLI/LANShareManager.CLI.csproj -c Release -r win-x64 --self-contained false -o ./dist/
 
+    - name: Compress Distribution Package
+      shell: pwsh
+      run: |
+        Compress-Archive -Path ./dist/* -DestinationPath ./LANShareManager-v1.0.0-win-x64.zip -Force
+        $hash = (Get-FileHash ./LANShareManager-v1.0.0-win-x64.zip -Algorithm SHA256).Hash
+        Write-Host "PACKAGE_SHA256: $hash"
+
     - name: Upload Artifacts
       uses: actions/upload-artifact@v4
       with:
         name: LANShareManager-win-x64
-        path: ./dist/
+        path: ./LANShareManager-v1.0.0-win-x64.zip
+
+    - name: Update GitHub Release Asset
+      shell: pwsh
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        gh release upload v1.0.0 ./LANShareManager-v1.0.0-win-x64.zip --clobber
+
