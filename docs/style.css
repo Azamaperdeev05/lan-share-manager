@@ -1053,12 +1053,205 @@ body {
 }
 
 /* ==========================================================================
-   RESPONSIVE STRATEGY (Breakpoints: 1024px, 768px, 600px)
+   WIN + R INTERACTIVE GUIDE COMPONENT
+   ========================================================================== */
+.winr-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xl);
+}
+
+.winr-steps-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-lg);
+}
+
+.winr-step-card {
+  background-color: var(--colors-canvas);
+  border: 1px solid var(--colors-hairline);
+  border-radius: var(--rounded-md);
+  padding: var(--space-xl);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  transition: var(--transition-fast);
+}
+
+.winr-step-card:hover {
+  border-color: var(--colors-ink);
+  transform: translateY(-2px);
+}
+
+.winr-step-card.featured {
+  background-color: var(--colors-canvas-soft);
+  border: 1px solid rgba(0, 102, 255, 0.25);
+}
+
+.step-badge {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--colors-ink);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 650;
+  font-size: 13px;
+  margin-bottom: var(--space-md);
+}
+
+.key-combo-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.key-cap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 14px;
+  background: var(--colors-canvas);
+  border: 1px solid var(--colors-hairline);
+  box-shadow: 0 2px 0 var(--colors-hairline);
+  border-radius: 8px;
+  font-family: var(--font-sans);
+  font-weight: 650;
+  font-size: 14px;
+  color: var(--colors-ink);
+}
+
+.key-plus {
+  font-weight: 650;
+  color: var(--colors-text-muted);
+}
+
+.unc-tag {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 650;
+  text-transform: uppercase;
+  color: var(--colors-accent);
+  background: rgba(0, 102, 255, 0.08);
+  padding: 3px 8px;
+  border-radius: var(--rounded-full);
+  align-self: flex-start;
+}
+
+.unc-live-box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  background: var(--colors-canvas);
+  border: 1px solid var(--colors-hairline);
+  padding: 6px 8px 6px 14px;
+  border-radius: var(--rounded-full);
+  margin-top: var(--space-md);
+  overflow: hidden;
+}
+
+.unc-code {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--colors-ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.winr-detail-card {
+  display: grid;
+  grid-template-columns: 1.15fr 1fr;
+  gap: var(--space-xl);
+  background-color: var(--colors-canvas-soft);
+  border-radius: var(--rounded-md);
+  padding: var(--space-xl);
+  align-items: center;
+}
+
+.winr-dialog-mockup {
+  background: #ffffff;
+  border: 1px solid var(--colors-hairline);
+  border-radius: var(--rounded-sm);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+}
+
+.winr-dialog-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--colors-hairline);
+  background: var(--colors-canvas-soft);
+}
+
+.winr-dialog-body {
+  padding: 20px;
+}
+
+.win-btn-primary {
+  padding: 6px 18px;
+  border-radius: 4px;
+  background: var(--colors-ink);
+  color: #fff;
+  border: none;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.win-btn-secondary {
+  padding: 6px 16px;
+  border-radius: 4px;
+  background: var(--colors-canvas-soft);
+  color: var(--colors-ink);
+  border: 1px solid var(--colors-hairline);
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.winr-tips-column {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.winr-tip-box {
+  background: var(--colors-canvas);
+  border: 1px solid var(--colors-hairline);
+  border-radius: var(--rounded-sm);
+  padding: var(--space-md) var(--space-lg);
+  display: flex;
+  gap: var(--space-md);
+  align-items: flex-start;
+}
+
+.tip-icon {
+  font-size: 20px;
+  line-height: 1;
+}
+
+/* ==========================================================================
+   RESPONSIVE STRATEGY (Breakpoints: 1024px, 900px, 768px, 600px)
    ========================================================================== */
 
 @media (max-width: 1024px) {
   .features-grid {
     grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 900px) {
+  .winr-steps-grid {
+    grid-template-columns: 1fr;
+  }
+  .winr-detail-card {
+    grid-template-columns: 1fr;
   }
 }
 

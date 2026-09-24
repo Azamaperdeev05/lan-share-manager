@@ -3,898 +3,37 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>LAN Share Manager — Windows 10/11 үшін 1 кликпен SMB папкаларын ортақ ету.</title>
-  <meta name="description" content="Mobbin дизайнымен жасалған Windows 10/11 желілік папкалар менеджері. Автоматты NTFS рұқсаттары, Брандмауэр ережелері және 10-деңгейлі жүйелік диагностика.">
+  <title>LAN Share Manager — Windows 10/11 үшін 1 кликпен SMB папкаларын ортақ ету</title>
+  <meta name="description" content="Mobbin дизайнымен жасалған Windows 10/11 желілік папкалар менеджері. Автоматты NTFS рұқсаттары, Брандмауэр ережелері, Win+R нұсқаулығы және 10-деңгейлі жүйелік диагностика.">
   
   <!-- Open Graph -->
-  <meta property="og:title" content="LAN Share Manager — SMB желілік ортақ қатынасын 1 кликпен баптау.">
-  <meta property="og:description" content="Автоматты NTFS, Windows Firewall (TCP 445) және 10-деңгейлі авто-диагностика.">
+  <meta property="og:title" content="LAN Share Manager — SMB желілік ортақ қатынасын 1 кликпен баптау">
+  <meta property="og:description" content="Автоматты NTFS, Windows Firewall (TCP 445), Win+R нұсқаулығы және 10-деңгейлі авто-диагностика.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://azamaperdeev05.github.io/lan-share-manager/">
 
-  <!-- Google Fonts: Inter (300, 450, 650, 700) & JetBrains Mono -->
+  <!-- Google Fonts: Inter & JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,300..700;1,14..32,300..700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   
+  <!-- Critical Fallback Styles to Prevent FOUC -->
   <style>
-/* ==========================================================================
-   MOBBIN DESIGN SYSTEM — INLINE STYLES FOR ZERO FOUC & CACHE IMMUNITY
-   Gallery-White Monochrome Palette (#141414 on #ffffff)
-   Stadium-pill Interaction Language | Variable Weight Typography (650/450/300)
-   ========================================================================== */
-
-:root {
-  --colors-ink: #141414;
-  --colors-ink-soft: #262626;
-  --colors-accent: #0066ff;
-  --colors-on-primary: #ffffff;
-  --colors-canvas: #ffffff;
-  --colors-canvas-soft: #f3f3f3;
-  --colors-field: #f0f0f0;
-  --colors-hairline-soft: #f0f0f0;
-  --colors-hairline: #e0e0e0;
-  --colors-text-main: #141414;
-  --colors-text-muted: #707070;
-  --colors-text-faint: #adadad;
-  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
-  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
-  --rounded-none: 0px;
-  --rounded-sm: 16px;
-  --rounded-md: 24px;
-  --rounded-full: 9999px;
-  --radius-squircle: 30%;
-  --space-xxs: 4px;
-  --space-xs: 8px;
-  --space-sm: 12px;
-  --space-md: 16px;
-  --space-lg: 24px;
-  --space-xl: 32px;
-  --space-xxl: 48px;
-  --space-section: 80px;
-  --space-section-lg: 120px;
-  --shadow-active-pill: 0 1px 3px rgba(20, 20, 20, 0.08);
-  --transition-fast: 0.15s ease;
-  --transition-smooth: 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-*, *::before, *::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  letter-spacing: 0;
-}
-
-html {
-  scroll-behavior: smooth;
-  background-color: #ffffff !important;
-  color: #141414 !important;
-  font-family: var(--font-sans);
-  -webkit-font-smoothing: antialiased;
-}
-
-body {
-  background-color: #ffffff !important;
-  color: #141414 !important;
-  line-height: 1.38;
-  font-weight: 450;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-}
-
-.type-display {
-  font-size: clamp(40px, 5.5vw, 72px);
-  font-weight: 650;
-  line-height: 1.05;
-  color: var(--colors-ink);
-}
-
-.type-heading-1 {
-  font-size: clamp(32px, 4vw, 52px);
-  font-weight: 650;
-  line-height: 1.05;
-  color: var(--colors-ink);
-}
-
-.type-heading-2 {
-  font-size: clamp(26px, 3.2vw, 40px);
-  font-weight: 650;
-  line-height: 1.15;
-  color: var(--colors-ink);
-}
-
-.type-heading-3 {
-  font-size: 28px;
-  font-weight: 650;
-  line-height: 1.15;
-  color: var(--colors-ink);
-}
-
-.type-heading-4 {
-  font-size: 22px;
-  font-weight: 650;
-  line-height: 1.25;
-  color: var(--colors-ink);
-}
-
-.type-title {
-  font-size: 18px;
-  font-weight: 600;
-  line-height: 1.3;
-  color: var(--colors-ink);
-}
-
-.type-body-lg {
-  font-size: 19px;
-  font-weight: 300;
-  line-height: 1.4;
-  color: var(--colors-text-muted);
-}
-
-.type-body {
-  font-size: 16px;
-  font-weight: 450;
-  line-height: 1.4;
-  color: var(--colors-text-main);
-}
-
-.type-body-sm {
-  font-size: 14px;
-  font-weight: 450;
-  line-height: 1.45;
-  color: var(--colors-text-muted);
-}
-
-.type-link {
-  font-size: 15px;
-  font-weight: 600;
-  line-height: 1.38;
-  color: var(--colors-ink);
-  text-decoration: none;
-}
-
-.type-label {
-  font-size: 12px;
-  font-weight: 600;
-  line-height: 1.33;
-}
-
-.type-caption {
-  font-size: 11px;
-  font-weight: 600;
-  text-transform: uppercase;
-  line-height: 1.33;
-  color: var(--colors-text-faint);
-}
-
-.container {
-  width: 100%;
-  max-width: 1160px;
-  margin: 0 auto;
-  padding: 0 var(--space-lg);
-}
-
-.container-narrow {
-  width: 100%;
-  max-width: 820px;
-  margin: 0 auto;
-  padding: 0 var(--space-lg);
-}
-
-.section-gap {
-  padding-top: var(--space-section);
-  padding-bottom: var(--space-section);
-}
-
-/* Stadium Pill Buttons ({rounded.full}) */
-.button-primary {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-xs);
-  height: 44px;
-  padding: 0 var(--space-lg);
-  border-radius: var(--rounded-full);
-  background-color: var(--colors-ink);
-  color: var(--colors-on-primary) !important;
-  font-family: var(--font-sans);
-  font-size: 14px;
-  font-weight: 600;
-  text-decoration: none;
-  border: none;
-  cursor: pointer;
-  transition: var(--transition-fast);
-  white-space: nowrap;
-}
-
-.button-primary:hover {
-  background-color: var(--colors-ink-soft);
-  transform: translateY(-1px);
-}
-
-.button-outline {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-xs);
-  height: 44px;
-  padding: 0 var(--space-lg);
-  border-radius: var(--rounded-full);
-  background-color: var(--colors-canvas);
-  color: var(--colors-ink) !important;
-  border: 1px solid var(--colors-hairline);
-  font-family: var(--font-sans);
-  font-size: 14px;
-  font-weight: 600;
-  text-decoration: none;
-  cursor: pointer;
-  transition: var(--transition-fast);
-  white-space: nowrap;
-}
-
-.button-outline:hover {
-  border-color: var(--colors-ink);
-  background-color: var(--colors-canvas-soft);
-}
-
-.button-pill-soft {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-xs);
-  height: 34px;
-  padding: 0 var(--space-md);
-  border-radius: var(--rounded-full);
-  background-color: var(--colors-canvas-soft);
-  color: var(--colors-ink) !important;
-  font-family: var(--font-sans);
-  font-size: 13px;
-  font-weight: 600;
-  text-decoration: none;
-  border: none;
-  cursor: pointer;
-  transition: var(--transition-fast);
-}
-
-.button-pill-soft:hover {
-  background-color: var(--colors-field);
-}
-
-/* Floating Stadium Nav Bar (.nav-pill) */
-.nav-wrapper {
-  position: sticky;
-  top: 16px;
-  z-index: 1000;
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  pointer-events: none;
-  padding: 0 var(--space-md);
-}
-
-.nav-pill {
-  pointer-events: auto;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-lg);
-  background-color: var(--colors-canvas-soft);
-  padding: 6px 8px 6px 16px;
-  border-radius: var(--rounded-full);
-  width: 100%;
-  max-width: 960px;
-  border: 1px solid rgba(0, 0, 0, 0.05);
-}
-
-.nav-brand {
-  display: flex;
-  align-items: center;
-  gap: var(--space-xs);
-  text-decoration: none;
-  color: var(--colors-ink);
-}
-
-.brand-squircle {
-  width: 28px;
-  height: 28px;
-  border-radius: var(--radius-squircle);
-  background-color: var(--colors-ink);
-  color: var(--colors-on-primary);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 14px;
-}
-
-.nav-brand-title {
-  font-size: 15px;
-  font-weight: 650;
-  color: var(--colors-ink);
-}
-
-.nav-links {
-  display: flex;
-  align-items: center;
-  gap: var(--space-xs);
-  list-style: none;
-}
-
-.nav-link {
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--colors-text-muted);
-  text-decoration: none;
-  transition: var(--transition-fast);
-  padding: 6px 12px;
-  border-radius: var(--rounded-full);
-}
-
-.nav-link:hover {
-  color: var(--colors-ink);
-  background-color: rgba(0, 0, 0, 0.03);
-}
-
-.nav-actions {
-  display: flex;
-  align-items: center;
-  gap: var(--space-xs);
-}
-
-.lang-selector {
-  display: flex;
-  background-color: var(--colors-field);
-  padding: 3px;
-  border-radius: var(--rounded-full);
-  gap: 2px;
-}
-
-.lang-btn {
-  border: none;
-  background: transparent;
-  padding: 4px 10px;
-  border-radius: var(--rounded-full);
-  font-size: 11px;
-  font-weight: 650;
-  cursor: pointer;
-  color: var(--colors-text-muted);
-  transition: var(--transition-fast);
-}
-
-.lang-btn.active {
-  background-color: var(--colors-canvas);
-  color: var(--colors-ink);
-  box-shadow: var(--shadow-active-pill);
-}
-
-/* Hero Section */
-.hero {
-  text-align: center;
-  padding: 70px 0 50px 0;
-}
-
-.hero-badge-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-xs);
-  background-color: var(--colors-canvas-soft);
-  padding: 6px 14px;
-  border-radius: var(--rounded-full);
-  margin-bottom: var(--space-lg);
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--colors-ink);
-}
-
-.hero-title {
-  margin-bottom: var(--space-md);
-  color: var(--colors-ink);
-}
-
-.hero-subtitle {
-  max-width: 680px;
-  margin: 0 auto var(--space-xl) auto;
-}
-
-.terminal-launcher-pill {
-  max-width: 600px;
-  margin: 0 auto var(--space-xl) auto;
-  background-color: var(--colors-canvas-soft);
-  border: 1px solid var(--colors-hairline-soft);
-  border-radius: var(--rounded-full);
-  padding: 6px 8px 6px 18px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-sm);
-}
-
-.terminal-pill-code {
-  font-family: var(--font-mono);
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--colors-ink);
-  overflow-x: auto;
-  white-space: nowrap;
-}
-
-.terminal-pill-code span.prompt {
-  color: var(--colors-text-muted);
-  margin-right: 6px;
-  user-select: none;
-}
-
-.copy-pill-btn {
-  height: 34px;
-  padding: 0 16px;
-  border-radius: var(--rounded-full);
-  background-color: var(--colors-ink);
-  color: var(--colors-on-primary);
-  border: none;
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: var(--transition-fast);
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.copy-pill-btn:hover {
-  background-color: var(--colors-ink-soft);
-}
-
-.hero-cta-group {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: var(--space-sm);
-  flex-wrap: wrap;
-}
-
-/* Squircles & Marquee */
-.app-icon-squircle {
-  border-radius: var(--radius-squircle);
-  overflow: hidden;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  background-color: var(--colors-canvas-soft);
-  flex-shrink: 0;
-}
-
-.brand-marquee-strip {
-  overflow-x: auto;
-  padding: 24px 0;
-  display: flex;
-  gap: var(--space-md);
-  white-space: nowrap;
-  border-top: 1px solid var(--colors-hairline-soft);
-  border-bottom: 1px solid var(--colors-hairline-soft);
-  margin: var(--space-xl) 0;
-  justify-content: center;
-  flex-wrap: wrap;
-}
-
-.brand-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-xs);
-  padding: 8px 16px;
-  background-color: var(--colors-canvas-soft);
-  border-radius: var(--rounded-full);
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--colors-ink);
-}
-
-/* Segmented Control */
-.segmented-control {
-  display: inline-flex;
-  background-color: var(--colors-canvas-soft);
-  padding: 4px;
-  border-radius: var(--rounded-full);
-  gap: 4px;
-}
-
-.segmented-item {
-  border: none;
-  background: transparent;
-  padding: 8px 18px;
-  border-radius: var(--rounded-full);
-  font-family: var(--font-sans);
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--colors-text-muted);
-  cursor: pointer;
-  transition: var(--transition-fast);
-}
-
-.segmented-item.active {
-  background-color: var(--colors-canvas);
-  color: var(--colors-ink);
-  box-shadow: var(--shadow-active-pill);
-}
-
-/* Badges */
-.badge-popular {
-  display: inline-flex;
-  align-items: center;
-  padding: 3px 10px;
-  border-radius: var(--rounded-full);
-  background-color: var(--colors-accent);
-  color: var(--colors-on-primary);
-  font-size: 11px;
-  font-weight: 600;
-}
-
-.badge-soft {
-  display: inline-flex;
-  align-items: center;
-  padding: 3px 10px;
-  border-radius: var(--rounded-full);
-  background-color: var(--colors-canvas-soft);
-  color: var(--colors-ink);
-  font-size: 12px;
-  font-weight: 600;
-}
-
-/* App Showcase Frame */
-.showcase-frame {
-  background-color: var(--colors-canvas);
-  border: 1px solid var(--colors-hairline-soft);
-  border-radius: var(--rounded-md);
-  padding: var(--space-xl);
-  margin-top: var(--space-lg);
-}
-
-.mockup-inner-window {
-  background-color: var(--colors-canvas);
-  border: 1px solid var(--colors-hairline);
-  border-radius: var(--rounded-sm);
-  overflow: hidden;
-}
-
-.mockup-titlebar {
-  background-color: var(--colors-canvas-soft);
-  padding: 10px 16px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border-bottom: 1px solid var(--colors-hairline-soft);
-  font-size: 13px;
-  font-weight: 600;
-}
-
-.mockup-body {
-  padding: var(--space-lg);
-}
-
-/* Tables */
-.ex-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.ex-table th {
-  background-color: var(--colors-canvas-soft);
-  padding: 10px 16px;
-  text-align: left;
-  font-size: 11px;
-  font-weight: 650;
-  text-transform: uppercase;
-  color: var(--colors-text-muted);
-}
-
-.ex-table td {
-  padding: 12px 16px;
-  border-bottom: 1px solid var(--colors-hairline-soft);
-  font-size: 14px;
-}
-
-/* Comparison Section */
-.comparison-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--space-lg);
-  margin-top: var(--space-lg);
-}
-
-.compare-card-bad {
-  background-color: var(--colors-canvas);
-  border: 1px solid var(--colors-hairline-soft);
-  border-radius: var(--rounded-md);
-  padding: var(--space-xl);
-}
-
-.compare-card-good {
-  background-color: var(--colors-canvas-soft);
-  border-radius: var(--rounded-md);
-  padding: var(--space-xl);
-}
-
-.compare-list {
-  list-style: none;
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-md);
-  margin-top: var(--space-lg);
-}
-
-.compare-item {
-  display: flex;
-  gap: var(--space-sm);
-  font-size: 15px;
-  line-height: 1.45;
-}
-
-.compare-item strong {
-  font-weight: 650;
-  color: var(--colors-ink);
-}
-
-.compare-icon-bad {
-  color: var(--colors-text-muted);
-  font-weight: 700;
-  flex-shrink: 0;
-}
-
-.compare-icon-good {
-  color: var(--colors-ink);
-  font-weight: 700;
-  flex-shrink: 0;
-}
-
-/* Features Grid */
-.features-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: var(--space-lg);
-  margin-top: var(--space-xl);
-}
-
-.feature-tile {
-  background-color: var(--colors-canvas);
-  border: 1px solid var(--colors-hairline-soft);
-  border-radius: var(--rounded-md);
-  padding: var(--space-xl);
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-sm);
-  transition: var(--transition-fast);
-}
-
-.feature-tile:hover {
-  background-color: var(--colors-canvas-soft);
-}
-
-.feature-icon-squircle {
-  width: 44px;
-  height: 44px;
-  border-radius: var(--radius-squircle);
-  background-color: var(--colors-canvas-soft);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 20px;
-  margin-bottom: var(--space-xs);
-}
-
-/* Terminal CLI */
-.cli-container {
-  background-color: var(--colors-canvas-soft);
-  border-radius: var(--rounded-md);
-  padding: var(--space-lg);
-  margin-top: var(--space-lg);
-}
-
-.cli-controls {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: var(--space-md);
-  flex-wrap: wrap;
-  gap: var(--space-sm);
-}
-
-.cli-screen {
-  background-color: #0d1117;
-  color: #c9d1d9;
-  font-family: var(--font-mono);
-  font-size: 13px;
-  line-height: 1.5;
-  padding: var(--space-lg);
-  border-radius: var(--rounded-sm);
-  overflow-x: auto;
-  white-space: pre;
-}
-
-/* Card primitives */
-.card-flat {
-  background-color: var(--colors-canvas);
-  border: 1px solid var(--colors-hairline-soft);
-  border-radius: var(--rounded-md);
-  padding: var(--space-lg);
-}
-
-.card-featured {
-  background-color: var(--colors-canvas-soft);
-  border-radius: var(--rounded-md);
-  padding: var(--space-lg);
-}
-
-/* FAQ Accordion */
-.faq-list {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-sm);
-  margin-top: var(--space-lg);
-}
-
-.faq-row {
-  width: 100%;
-  background-color: var(--colors-canvas-soft);
-  border-radius: var(--rounded-sm);
-  padding: var(--space-lg);
-  cursor: pointer;
-  transition: var(--transition-fast);
-  border: none;
-  text-align: left;
-}
-
-.faq-row-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 16px;
-  font-weight: 650;
-  color: var(--colors-ink);
-}
-
-.faq-chevron {
-  transition: transform 0.2s ease;
-  font-size: 14px;
-  color: var(--colors-text-muted);
-}
-
-.faq-row.active .faq-chevron {
-  transform: rotate(180deg);
-}
-
-.faq-answer {
-  display: none;
-  padding-top: var(--space-md);
-  font-size: 15px;
-  line-height: 1.45;
-  color: var(--colors-text-muted);
-}
-
-.faq-row.active .faq-answer {
-  display: block;
-}
-
-/* Text Input */
-.text-input {
-  width: 100%;
-  height: 44px;
-  background-color: var(--colors-field);
-  border: 1px solid transparent;
-  border-radius: var(--rounded-sm);
-  padding: 0 var(--space-md);
-  font-family: var(--font-sans);
-  font-size: 14px;
-  color: var(--colors-ink);
-  outline: none;
-  transition: var(--transition-fast);
-}
-
-.text-input:focus {
-  border-color: var(--colors-ink);
-  box-shadow: 0 0 0 1px var(--colors-ink);
-}
-
-/* Footer: Polarity Inversion */
-.footer-band {
-  background-color: var(--colors-ink);
-  color: var(--colors-on-primary);
-  border-top-left-radius: var(--rounded-md);
-  border-top-right-radius: var(--rounded-md);
-  padding: 70px 0 40px 0;
-  margin-top: auto;
-}
-
-.footer-grid {
-  display: grid;
-  grid-template-columns: 2fr 1fr 1fr;
-  gap: var(--space-xl);
-  margin-bottom: var(--space-xl);
-}
-
-.footer-wordmark {
-  font-size: 28px;
-  font-weight: 650;
-  color: var(--colors-on-primary);
-  margin-bottom: var(--space-xs);
-}
-
-.footer-tagline {
-  color: var(--colors-text-faint);
-  font-size: 14px;
-  max-width: 380px;
-}
-
-.footer-col-title {
-  font-size: 12px;
-  font-weight: 650;
-  text-transform: uppercase;
-  color: var(--colors-text-faint);
-  margin-bottom: var(--space-md);
-}
-
-.footer-links {
-  list-style: none;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.footer-links a {
-  color: var(--colors-text-faint);
-  text-decoration: none;
-  font-size: 14px;
-  transition: var(--transition-fast);
-}
-
-.footer-links a:hover {
-  color: var(--colors-on-primary);
-}
-
-.footer-bottom {
-  padding-top: var(--space-lg);
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 13px;
-  color: var(--colors-text-faint);
-  flex-wrap: wrap;
-  gap: var(--space-md);
-}
-
-@media (max-width: 1024px) {
-  .features-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (max-width: 768px) {
-  .nav-links {
-    display: none;
-  }
-  .comparison-grid {
-    grid-template-columns: 1fr;
-  }
-  .features-grid {
-    grid-template-columns: 1fr;
-  }
-  .footer-grid {
-    grid-template-columns: 1fr;
-    gap: var(--space-lg);
-  }
-  .terminal-launcher-pill {
-    flex-direction: column;
-    align-items: stretch;
-    border-radius: var(--rounded-sm);
-    padding: var(--space-md);
-  }
-  .copy-pill-btn {
-    width: 100%;
-    justify-content: center;
-  }
-}
+    :root {
+      --colors-ink: #141414;
+      --colors-canvas: #ffffff;
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+    }
+    html, body {
+      background-color: #ffffff !important;
+      color: #141414 !important;
+      font-family: var(--font-sans);
+      margin: 0;
+      padding: 0;
+    }
   </style>
 
-  <link rel="stylesheet" href="style.css?v=20260924-mobbin">
+  <link rel="stylesheet" href="style.css?v=20260924-v2">
 </head>
 <body>
 
@@ -908,11 +47,12 @@ body {
 
       <ul class="nav-links">
         <li><a href="#features" class="nav-link" data-i18n="navFeatures">Мүмкіндіктер</a></li>
+        <li><a href="#winr" class="nav-link" style="color: var(--colors-accent); font-weight: 650;" data-i18n="navWinr">Win+R Нұсқаулық</a></li>
         <li><a href="#compare" class="nav-link" data-i18n="navCompare">Салыстыру</a></li>
-        <li><a href="#showcase" class="nav-link">Интерфейс</a></li>
+        <li><a href="#showcase" class="nav-link" data-i18n="navShowcase">Интерфейс</a></li>
         <li><a href="#cli" class="nav-link" data-i18n="navCli">CLI</a></li>
         <li><a href="#faq" class="nav-link" data-i18n="navFaq">Сұрақ-жауап</a></li>
-        <li><a href="components.html" class="nav-link" style="color: var(--colors-ink);">Design System ↗</a></li>
+        <li><a href="components.html" class="nav-link" style="color: var(--colors-ink);">UI Kit ↗</a></li>
       </ul>
 
       <div class="nav-actions">
@@ -924,7 +64,7 @@ body {
         </div>
 
         <a href="https://github.com/Azamaperdeev05/lan-share-manager" target="_blank" class="button-primary" style="height: 36px; padding: 0 16px; font-size: 13px;">
-          GitHub
+          GitHub ↗
         </a>
       </div>
     </nav>
@@ -986,16 +126,16 @@ body {
     <section class="container section-gap" id="showcase">
       <div style="text-align: center; margin-bottom: var(--space-xl);">
         <h2 class="type-heading-2" data-i18n="secShowcaseTitle">Графикалық және Консольдік орта.</h2>
-        <p class="type-body" style="color: var(--colors-text-muted); margin-top: var(--space-xs);">
+        <p class="type-body" style="color: var(--colors-text-muted); margin-top: var(--space-xs);" data-i18n="secShowcaseSubtitle">
           WPF Windows 11 интерфейсі және автоматтандыруға арналған CLI бірыңғай жүйеде.
         </p>
 
         <!-- Segmented Control for Showcase Tabs -->
         <div class="segmented-control" style="margin-top: var(--space-lg);">
-          <button class="segmented-item active" data-tab="main">1. Басты терезе</button>
-          <button class="segmented-item" data-tab="create">2. Ресурс жасау</button>
-          <button class="segmented-item" data-tab="result">3. Нәтиже мен Путьтар</button>
-          <button class="segmented-item" data-tab="diag">4. 10-деңгейлі Диагностика</button>
+          <button class="segmented-item active" data-tab="main" data-i18n="tabMain">1. Басты терезе</button>
+          <button class="segmented-item" data-tab="create" data-i18n="tabCreate">2. Ресурс жасау</button>
+          <button class="segmented-item" data-tab="result" data-i18n="tabResult">3. Нәтиже мен Жолдар</button>
+          <button class="segmented-item" data-tab="diag" data-i18n="tabDiag">4. 10-деңгейлі Диагностика</button>
         </div>
       </div>
 
@@ -1081,7 +221,7 @@ body {
                   <button class="button-pill-soft">Сілтемені көшіру</button>
                   <button class="button-pill-soft">Диагностика</button>
                 </div>
-                <button class="button-primary">+ Жаңа ресурс қосу</button>
+                <button class="button-primary">+ Жаңа ортақ папка</button>
               </div>
             </div>
 
@@ -1136,8 +276,8 @@ body {
                     <strong style="font-family: var(--font-mono); font-size: 13px;">\\DESKTOP-MKVG1ET\OBSHAYA</strong>
                   </div>
                   <div style="background-color: var(--colors-canvas-soft); padding: 12px 16px; border-radius: var(--rounded-sm); display: flex; justify-content: space-between; align-items: center;">
-                    <span class="type-caption">IP АДРЕС ПУТЬ:</span>
-                    <strong style="font-family: var(--font-mono); font-size: 13px;">\\192.168.1.100\OBSHAYA</strong>
+                    <span class="type-caption">IP АДРЕС ПУТЬ (ҰСЫНЫЛАТЫН):</span>
+                    <strong style="font-family: var(--font-mono); font-size: 13px; color: var(--colors-ink);">\\192.168.1.100\OBSHAYA</strong>
                   </div>
                 </div>
 
@@ -1185,6 +325,124 @@ body {
       </div>
     </section>
 
+    <!-- Win + R Connection Guide Section -->
+    <section class="container section-gap" id="winr">
+      <div style="text-align: center; margin-bottom: var(--space-xl);">
+        <div class="hero-badge-pill" style="margin: 0 auto 16px auto;">
+          <span class="app-icon-squircle" style="width: 18px; height: 18px; background: var(--colors-ink); color: #fff; font-size: 11px;">💡</span>
+          <span data-i18n="winrBadge">Басқа компьютерден қосылу • How to Connect from Another PC</span>
+        </div>
+        <h2 class="type-heading-2" data-i18n="winrTitle">Win + R арқылы ортақ папканы лезде ашыңыз.</h2>
+        <p class="type-body-lg" style="max-width: 680px; margin: var(--space-xs) auto 0 auto;" data-i18n="winrSubtitle">
+          Көрші немесе кеңседегі кез келген Windows компьютерінен ортақ файлдарға 3 қарапайым қадаммен қосылыңыз.
+        </p>
+      </div>
+
+      <div class="winr-container">
+        <!-- Interactive Step Cards -->
+        <div class="winr-steps-grid">
+          <div class="winr-step-card">
+            <div class="step-badge">1</div>
+            <div class="key-combo-pill">
+              <span class="key-cap">⊞ Win</span>
+              <span class="key-plus">+</span>
+              <span class="key-cap">R</span>
+            </div>
+            <h4 class="type-heading-4" style="margin-top: 14px;" data-i18n="winrStep1Title">Пернетақтаны басыңыз</h4>
+            <p class="type-body-sm" data-i18n="winrStep1Desc">
+              Басқа компьютерде Win + R басыңыз — Windows-тың «Выполнить / Run» командалық терезесі ашылады.
+            </p>
+          </div>
+
+          <div class="winr-step-card featured">
+            <div class="step-badge">2</div>
+            <div class="unc-tag">UNC Network Path</div>
+            <h4 class="type-heading-4" style="margin-top: 14px;" data-i18n="winrStep2Title">Жолды көшіріп қойыңыз</h4>
+            <p class="type-body-sm" data-i18n="winrStep2Desc">
+              Ұсынылатын IP мекенжай жолын енгізіңіз. IP арқылы Windows желілік атауды кідіріссіз 100% ашады.
+            </p>
+            <div class="unc-live-box">
+              <span class="unc-code" id="unc-path-demo">\\192.168.1.100\OBSHAYA</span>
+              <button class="copy-pill-btn" data-copy-target="unc-path-demo" style="height: 32px; padding: 0 12px; font-size: 12px;">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                <span data-i18n="copyText">Көшіру</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="winr-step-card">
+            <div class="step-badge">3</div>
+            <div class="key-combo-pill">
+              <span class="key-cap" style="min-width: 70px;">↵ Enter</span>
+            </div>
+            <h4 class="type-heading-4" style="margin-top: 14px;" data-i18n="winrStep3Title">Enter басыңыз</h4>
+            <p class="type-body-sm" data-i18n="winrStep3Desc">
+              «ОК» немесе Enter басыңыз — ортақ папка Проводник (Explorer) терезесінде бірден ашылады!
+            </p>
+          </div>
+        </div>
+
+        <!-- Realistic Windows Run Dialog Mockup + Tips -->
+        <div class="winr-detail-card">
+          <div class="winr-dialog-mockup">
+            <div class="winr-dialog-header">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="font-size: 16px;">🏃</span>
+                <span style="font-weight: 650; font-size: 13px;" data-i18n="winrDialogTitle">Выполнить (Run)</span>
+              </div>
+              <span style="font-size: 14px; color: var(--colors-text-muted); cursor: pointer;">✕</span>
+            </div>
+            <div class="winr-dialog-body">
+              <p class="type-body-sm" style="margin-bottom: 12px;" data-i18n="winrDialogPrompt">
+                Введите имя программы, папки, документа или ресурса Интернета, которые требуется открыть.
+              </p>
+              <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 16px;">
+                <label style="font-size: 13px; font-weight: 600; white-space: nowrap;" data-i18n="winrDialogField">Открыть:</label>
+                <div style="flex: 1; display: flex; align-items: center; background: #fff; border: 1px solid var(--colors-hairline); border-radius: 6px; padding: 6px 12px; font-family: var(--font-mono); font-size: 13px;">
+                  <span>\\192.168.1.100\OBSHAYA</span>
+                </div>
+              </div>
+              <div style="display: flex; justify-content: flex-end; gap: 8px;">
+                <button class="win-btn-primary">ОК</button>
+                <button class="win-btn-secondary">Отмена</button>
+                <button class="win-btn-secondary">Обзор...</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="winr-tips-column">
+            <!-- Tip 1: Credentials -->
+            <div class="winr-tip-box">
+              <div class="tip-icon">🔑</div>
+              <div>
+                <h5 class="type-title" style="font-size: 15px;" data-i18n="winrTipCredTitle">Логин немесе пароль сұралса?</h5>
+                <p class="type-body-sm" style="margin-top: 4px;" data-i18n="winrTipCredDesc">
+                  Егер «Ввод сетевых учетных данных» шықса, пайдаланушы атына <code>.\Пайдаланушы</code> және папка ашылған компьютердің паролін жазыңыз.
+                </p>
+              </div>
+            </div>
+
+            <!-- Tip 2: Permanent Drive Mapping -->
+            <div class="winr-tip-box">
+              <div class="tip-icon">💾</div>
+              <div>
+                <h5 class="type-title" style="font-size: 15px;" data-i18n="winrTipDriveTitle">Тұрақты диск (Z:) ретінде бекіту</h5>
+                <p class="type-body-sm" style="margin-top: 4px;" data-i18n="winrTipDriveDesc">
+                  Басқа компьютердің CMD терезесінде мына пәрменді 1 рет орындасаңыз, папка диск болып сақталып қалады:
+                </p>
+                <div class="unc-live-box" style="margin-top: 8px;">
+                  <span class="unc-code" id="cmd-drive-code" style="font-size: 12px;">net use Z: \\192.168.1.100\OBSHAYA /persistent:yes</span>
+                  <button class="copy-pill-btn" data-copy-target="cmd-drive-code" style="height: 28px; padding: 0 10px; font-size: 11px;">
+                    <span data-i18n="copyText">Көшіру</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- Comparison Section (Mobbin Surface Contrast: Canvas vs Canvas-Soft) -->
     <section class="container section-gap" id="compare">
       <div style="text-align: center; margin-bottom: var(--space-xl);">
@@ -1198,26 +456,26 @@ body {
         <!-- The Bad Way: White card with 1px hairline-soft -->
         <div class="compare-card-bad">
           <div style="display: flex; align-items: center; justify-content: space-between;">
-            <span class="type-heading-4">Стандартты Windows</span>
-            <span class="badge-soft" style="color: var(--colors-text-muted);">Қолмен 15 қадам</span>
+            <span class="type-heading-4" data-i18n="compareBadTitle">Стандартты Windows</span>
+            <span class="badge-soft" style="color: var(--colors-text-muted);" data-i18n="compareBadBadge">Қолмен 15 қадам</span>
           </div>
 
           <ul class="compare-list">
             <li class="compare-item">
               <span class="compare-icon-bad">✕</span>
-              <span><strong>Шатастыратын 15 терезе</strong>: Папка қасиеттері ➔ Доступ ➔ Безопасность ➔ Дополнительно ➔ Өзгерту.</span>
+              <span data-i18n="compareBad1"><strong>Шатастыратын 15 терезе</strong>: Папка қасиеттері ➔ Доступ ➔ Безопасность ➔ Дополнительно ➔ Өзгерту.</span>
             </li>
             <li class="compare-item">
               <span class="compare-icon-bad">✕</span>
-              <span><strong>NTFS қателіктері</strong>: Тек SMB рұқсатын ашып, файлдық NTFS құқығын ұмытып кетеді ➔ "Access Denied" қатесі шығады.</span>
+              <span data-i18n="compareBad2"><strong>NTFS қателіктері</strong>: Тек SMB рұқсатын ашып, файлдық NTFS құқығын ұмытып кетеді ➔ "Access Denied" қатесі шығады.</span>
             </li>
             <li class="compare-item">
               <span class="compare-icon-bad">✕</span>
-              <span><strong>Брандмауэрді өшіріп тастау</strong>: 445 портын білмегендіктен адамдар антивирусты толық сөндіріп, вирус жұқтырады.</span>
+              <span data-i18n="compareBad3"><strong>Брандмауэрді өшіріп тастау</strong>: 445 портын білмегендіктен адамдар антивирусты толық сөндіріп, вирус жұқтырады.</span>
             </li>
             <li class="compare-item">
               <span class="compare-icon-bad">✕</span>
-              <span><strong>Public Network қаупі</strong>: Егер желі кездейсоқ "Общедоступная" болса, компьютерлер бірін-бірі мүлдем көрмейді.</span>
+              <span data-i18n="compareBad4"><strong>Public Network қаупі</strong>: Егер желі кездейсоқ "Общедоступная" болса, компьютерлер бірін-бірі мүлдем көрмейді.</span>
             </li>
           </ul>
         </div>
@@ -1225,220 +483,201 @@ body {
         <!-- The Good Way: Canvas-soft fill, no border, with Electric Blue popular badge -->
         <div class="compare-card-good">
           <div style="display: flex; align-items: center; justify-content: space-between;">
-            <span class="type-heading-4">LAN Share Manager</span>
-            <!-- The single electric blue element per Mobbin spec -->
-            <span class="badge-popular">Ұсынылған</span>
+            <span class="type-heading-4" data-i18n="compareGoodTitle">LAN Share Manager</span>
+            <span class="badge-popular" data-i18n="compareGoodBadge">Ұсынылған ✓</span>
           </div>
 
           <ul class="compare-list">
             <li class="compare-item">
               <span class="compare-icon-good">✓</span>
-              <span><strong>Барлығы 1 батырмада</strong>: Папканы таңдайсыз, ат бересіз және басасыз. Барлық баптау 3 секундта бітеді.</span>
+              <span data-i18n="compareGood1"><strong>Барлығы 1 батырмада</strong>: Папканы таңдайсыз, ат бересіз және басасыз. Барлық баптау 3 секундта бітеді.</span>
             </li>
             <li class="compare-item">
               <span class="compare-icon-good">✓</span>
-              <span><strong>Синхронды SMB + NTFS</strong>: Қос деңгейлі құқықтар бірден толық үйлесімділікпен жазылады.</span>
+              <span data-i18n="compareGood2"><strong>Синхронды SMB + NTFS</strong>: Қос деңгейлі құқықтар бірден толық үйлесімділікпен жазылады.</span>
             </li>
             <li class="compare-item">
               <span class="compare-icon-good">✓</span>
-              <span><strong>Қауіпсіз Брандмауэр</strong>: Брандмауэр сөндірілмейді! Тек TCP 445 порты Private профиль үшін қауіпсіз ашылады.</span>
+              <span data-i18n="compareGood3"><strong>Қауіпсіз Брандмауэр</strong>: Брандмауэр сөндірілмейді! Тек TCP 445 порты Private профиль үшін қауіпсіз ашылады.</span>
             </li>
             <li class="compare-item">
               <span class="compare-icon-good">✓</span>
-              <span><strong>Дайын сілтемелер</strong>: Басқа компьютерге жіберетін \\ПК\SHARE және \\IP\SHARE жолдары бірден көшіріледі.</span>
+              <span data-i18n="compareGood4"><strong>Дайын сілтемелер</strong>: Басқа компьютерге жіберетін \\ПК\SHARE және \\IP\SHARE жолдары бірден көшіріледі.</span>
             </li>
           </ul>
         </div>
       </div>
     </section>
 
-    <!-- Key Capabilities (6 Cards Grid) -->
+    <!-- Key Features Grid (3 Columns on Desktop, 2 on Tablet, 1 on Mobile) -->
     <section class="container section-gap" id="features">
       <div style="text-align: center; margin-bottom: var(--space-xl);">
         <h2 class="type-heading-2" data-i18n="secFeaturesTitle">Негізгі мүмкіндіктер мен архитектура.</h2>
-      </div>
-
-      <div class="features-grid">
-        <div class="feature-tile">
-          <div class="feature-icon-squircle">🔒</div>
-          <h3 class="type-heading-4">Least Privilege.</h3>
-          <p class="type-body-sm">ReadOnly немесе ReadWrite таңдалса, дәл сол минималды қажетті рұқсат қана беріледі. Ешқашан артық құқық ашылмайды.</p>
-        </div>
-
-        <div class="feature-tile">
-          <div class="feature-icon-squircle">🛡</div>
-          <h3 class="type-heading-4">Қауіпсіз Брандмауэр.</h3>
-          <p class="type-body-sm">Кездейсоқ порттар ашылмайды. Ереже тек Private желі профиліне бекітіледі. Жүйе қауіпсіздігі 100% сақталады.</p>
-        </div>
-
-        <div class="feature-tile">
-          <div class="feature-icon-squircle">🩺</div>
-          <h3 class="type-heading-4">10-деңгейлі Диагностика.</h3>
-          <p class="type-body-sm">LanmanServer қызметінен бастап, нақты UNC path-қа дейін автоматты тексереді. Қате болса, нақты шешімін айтады.</p>
-        </div>
-
-        <div class="feature-tile">
-          <div class="feature-icon-squircle">💾</div>
-          <h3 class="type-heading-4">Нөлдік дерек жоғалуы.</h3>
-          <p class="type-body-sm">Ортақ папканы өшіргенде (Remove Share), дискідегі файлдар ешқашан өшпейді. Тек SMB желілік тіркеуі ғана алынады.</p>
-        </div>
-
-        <div class="feature-tile">
-          <div class="feature-icon-squircle">🔄</div>
-          <h3 class="type-heading-4">100% Идемпотенттілік.</h3>
-          <p class="type-body-sm">Бірнеше рет қатарынан іске қосқанмен де конфигурация дубликатталмайды және файлдық жүйе бұзылмайды.</p>
-        </div>
-
-        <div class="feature-tile">
-          <div class="feature-icon-squircle">⚡</div>
-          <h3 class="type-heading-4">JSON Экспорт & Импорт.</h3>
-          <p class="type-body-sm">Барлық баптауларды бір JSON файлына көшіріп, жаңа компьютерге немесе жаңа Windows орнатқанда лезде импорттаңыз.</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- Interactive CLI Terminal Simulator -->
-    <section class="container section-gap" id="cli">
-      <div style="text-align: center; margin-bottom: var(--space-xl);">
-        <h2 class="type-heading-2" data-i18n="secTerminalTitle">Интерактивті CLI Симуляторы.</h2>
-        <p class="type-body" style="color: var(--colors-text-muted); margin-top: var(--space-xs);">
-          Серверлерді және батч скрипттерді автоматтандыруға арналған консольдік интерфейс.
+        <p class="type-body" style="color: var(--colors-text-muted); margin-top: var(--space-xs);" data-i18n="secFeaturesSubtitle">
+          Windows ортақ қатынасын сенімді, жылдам әрі қауіпсіз етуге арналған құралдар жиынтығы.
         </p>
       </div>
 
-      <div class="cli-container">
-        <div class="cli-controls">
-          <div class="segmented-control">
-            <button class="cli-tab-btn segmented-item active" data-cmd="create">create</button>
-            <button class="cli-tab-btn segmented-item" data-cmd="list">list</button>
-            <button class="cli-tab-btn segmented-item" data-cmd="test">test</button>
-            <button class="cli-tab-btn segmented-item" data-cmd="export">export</button>
-          </div>
-          <span class="type-caption" style="font-family: var(--font-mono);">Windows PowerShell 5.1 / PowerShell 7+</span>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">⚡</div>
+          <h4 class="type-heading-4" data-i18n="feat1Title">1 кликпен ортақ ету</h4>
+          <p class="type-body-sm" data-i18n="feat1Desc">Папканы таңдап, рұқсат деңгейін таңдаңыз. Қалған барлық жүйелік операция автоматты түрде жасалады.</p>
         </div>
 
-        <div class="cli-screen" id="cli-screen-body">
-          <!-- Populated by script.js -->
-        </div>
-      </div>
-    </section>
-
-    <!-- Axiom / MAS Style Security Architecture -->
-    <section class="container section-gap">
-      <div class="card-featured" style="padding: var(--space-xxl) var(--space-xl);">
-        <div style="max-width: 680px; margin: 0 auto; text-align: center; margin-bottom: var(--space-xl);">
-          <h2 class="type-heading-2" data-i18n="secSecurityTitle">Axiom / MAS стиліндегі қауіпсіздік.</h2>
-          <p class="type-body-lg" style="margin-top: var(--space-xs);">
-            Неліктен <code>irm azamaperdeev05.github.io/lsm | iex</code> 100% қауіпсіз және жүйені ластамайды?
-          </p>
+        <div class="feature-card">
+          <div class="feature-icon">🔒</div>
+          <h4 class="type-heading-4" data-i18n="feat2Title">Ең аз артықшылық принципі</h4>
+          <p class="type-body-sm" data-i18n="feat2Desc">SMB және NTFS рұқсаттары толық үйлестіріледі. SYSTEM және Әкімші құқықтары сенімді қорғалған.</p>
         </div>
 
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: var(--space-lg);">
-          <div class="card-flat">
-            <div class="brand-squircle" style="width: 32px; height: 32px; margin-bottom: 12px; font-weight: 650;">1</div>
-            <h4 class="type-heading-4" style="font-size: 18px; margin-bottom: 6px;">Pre-flight Checks.</h4>
-            <p class="type-body-sm">PowerShell LanguageMode және .NET ортасы тексеріледі, бөгде антивирустар сканерленеді.</p>
-          </div>
+        <div class="feature-card">
+          <div class="feature-icon">🛡</div>
+          <h4 class="type-heading-4" data-i18n="feat3Title">Қауіпсіз Брандмауэр</h4>
+          <p class="type-body-sm" data-i18n="feat3Desc">Брандмауэр сөндірілмейді! Тек TCP 445 порты Private профиль үшін арнайы ашылады.</p>
+        </div>
 
-          <div class="card-flat">
-            <div class="brand-squircle" style="width: 32px; height: 32px; margin-bottom: 12px; font-weight: 650;">2</div>
-            <h4 class="type-heading-4" style="font-size: 18px; margin-bottom: 6px;">Multi-Mirror Fallback.</h4>
-            <p class="type-body-sm">GitHub Releases және Raw CDN арқылы екі тәуелсіз серверден кезекпен жүктеледі.</p>
-          </div>
+        <div class="feature-card">
+          <div class="feature-icon">🩺</div>
+          <h4 class="type-heading-4" data-i18n="feat4Title">10-деңгейлі диагностика</h4>
+          <p class="type-body-sm" data-i18n="feat4Desc">Служба күйі, порт ашықтығы, брандмауэр және кері байланыс UNC жолдары автоматты түрде тексеріледі.</p>
+        </div>
 
-          <div class="card-flat">
-            <div class="brand-squircle" style="width: 32px; height: 32px; margin-bottom: 12px; font-weight: 650;">3</div>
-            <h4 class="type-heading-4" style="font-size: 18px; margin-bottom: 6px;">SHA-256 Hash-Pinning.</h4>
-            <p class="type-body-sm">Жүктелген кодтың хэші қатаң тексеріледі. Егер 1 бит өзгерсе — орындалмай дереу жойылады.</p>
-          </div>
+        <div class="feature-card">
+          <div class="feature-icon">💡</div>
+          <h4 class="type-heading-4" data-i18n="feat5Title">Қателерді автоматты түзеу</h4>
+          <p class="type-body-sm" data-i18n="feat5Desc">Қателік орын алса, оның себебін түсіндіріп, 1 шертумен жөндеуге мүмкіндік береді.</p>
+        </div>
 
-          <div class="card-flat">
-            <div class="brand-squircle" style="width: 32px; height: 32px; margin-bottom: 12px; font-weight: 650;">4</div>
-            <h4 class="type-heading-4" style="font-size: 18px; margin-bottom: 6px;">Zero-Trace Cleanup.</h4>
-            <p class="type-body-sm">Бағдарлама Temp-тегі кездейсоқ GUID папкасында орындалып, жабылған соң өзін түгел өшіреді.</p>
-          </div>
+        <div class="feature-card">
+          <div class="feature-icon">📦</div>
+          <h4 class="type-heading-4" data-i18n="feat6Title">JSON резервтік көшірме</h4>
+          <p class="type-body-sm" data-i18n="feat6Desc">Барлық ортақ папкаларды 1 файлға сақтап, кез келген компьютерде бірден қалпына келтіруге болады.</p>
         </div>
       </div>
     </section>
 
-    <!-- FAQ Accordion (Mobbin .faq-row stadium/16px bars in canvas-soft) -->
+    <!-- Interactive Terminal CLI Simulator -->
+    <section class="container section-gap" id="cli">
+      <div style="text-align: center; margin-bottom: var(--space-xl);">
+        <h2 class="type-heading-2" data-i18n="secTerminalTitle">Интерактивті CLI Симуляторы.</h2>
+        <p class="type-body" style="color: var(--colors-text-muted); margin-top: var(--space-xs);" data-i18n="secTerminalSubtitle">
+          Серверлер мен скрипттер үшін толық консольдік қолдау.
+        </p>
+
+        <div class="cli-tabs-nav" style="margin-top: var(--space-lg);">
+          <button class="cli-tab-btn active" data-cmd="create">create</button>
+          <button class="cli-tab-btn" data-cmd="list">list</button>
+          <button class="cli-tab-btn" data-cmd="test">test (диагностика)</button>
+          <button class="cli-tab-btn" data-cmd="export">backup</button>
+        </div>
+      </div>
+
+      <!-- Dark Screen Terminal Container -->
+      <div class="cli-screen-wrapper">
+        <div class="cli-screen-header">
+          <div style="display: flex; gap: 6px;">
+            <span style="width: 12px; height: 12px; border-radius: 50%; background: #ff5f56;"></span>
+            <span style="width: 12px; height: 12px; border-radius: 50%; background: #ffbd2e;"></span>
+            <span style="width: 12px; height: 12px; border-radius: 50%; background: #27c93f;"></span>
+          </div>
+          <span style="font-family: var(--font-mono); font-size: 12px; color: #888;">Windows PowerShell (Administrator)</span>
+        </div>
+        <div class="cli-screen-body" id="cli-screen-body"></div>
+      </div>
+    </section>
+
+    <!-- FAQ Accordion -->
     <section class="container section-gap" id="faq">
       <div style="text-align: center; margin-bottom: var(--space-xl);">
         <h2 class="type-heading-2" data-i18n="secFaqTitle">Жиі қойылатын сұрақтар.</h2>
+        <p class="type-body" style="color: var(--colors-text-muted); margin-top: var(--space-xs);" data-i18n="secFaqSubtitle">
+          Желілік ортақ папкалар бойынша ең маңызды сұрақтар мен жауаптар.
+        </p>
       </div>
 
-      <div class="faq-list container-narrow">
-        <button class="faq-row active">
+      <div class="faq-accordion">
+        <button class="faq-row">
           <div class="faq-row-header">
-            <span>LAN Share Manager қандай Windows нұсқаларында жұмыс істейді?</span>
+            <span data-i18n="faq1Q">Бұл утилита компьютердегі файлдарды өшіріп тастауы мүмкін бе?</span>
             <span class="faq-chevron">▼</span>
           </div>
-          <div class="faq-answer">
-            Windows 10 (1809 және одан жаңа), Windows 11 барлық нұсқалары (Home, Pro, Enterprise) және Windows Server 2019/2022/2025 жүйелерінде толықтай жұмыс істейді.
+          <div class="faq-answer" data-i18n="faq1A">
+            Жоқ, ешқашан! Желілік ресурсты өшірген кезде тек желілік қолжетімділік тоқтатылады. Қатты дискідегі нақты файлдар мен папкалар 100% өзгеріссіз қалады.
           </div>
         </button>
 
         <button class="faq-row">
           <div class="faq-row-header">
-            <span>Неге міндетті түрде Администратор құқығы қажет?</span>
+            <span data-i18n="faq2Q">Басқа компьютерден қандай код теріп кіреміз?</span>
             <span class="faq-chevron">▼</span>
           </div>
-          <div class="faq-answer">
-            Windows жүйесінде SMB желілік ресурстарын тіркеу, Брандмауэр ережелерін (TCP 445) қосу және файлдық жүйенің NTFS қауіпсіздік ережелерін баптау тек Administrator құқығымен орындалады.
+          <div class="faq-answer" data-i18n="faq2A">
+            Басқа компьютерде Win + R басып, \\192.168.X.X\ПапкаАтауы деп тересіз. Enter басқан кезде папка бірден ашылады.
           </div>
         </button>
 
         <button class="faq-row">
           <div class="faq-row-header">
-            <span>Ресурсты жойғанда (Remove Share) файлдарым өшіп кетпей ме?</span>
+            <span data-i18n="faq3Q">Бағдарлама Windows брандмауэрін сөндіре ме?</span>
             <span class="faq-chevron">▼</span>
           </div>
-          <div class="faq-answer">
-            Жоқ! Бағдарламаның басты қауіпсіздік ережесі — ол тек SMB желілік ортақ қатынасын ғана өшіреді. Дискідегі папкаңыз бен барлық файлдарыңыз 100% сол қалпында қалады.
+          <div class="faq-answer" data-i18n="faq3A">
+            Жоқ! Брандмауэр ешқашан сөндірілмейді. Тек файл алмасуға қажетті TCP 445 порты жеке (Private) желі үшін ғана ашылады.
           </div>
         </button>
 
         <button class="faq-row">
           <div class="faq-row-header">
-            <span>Бағдарлама құпия сөздерді немесе логиндерді сақтай ма?</span>
+            <span data-i18n="faq4Q">Бағдарламаны қалай тез іске қосуға болады?</span>
             <span class="faq-chevron">▼</span>
           </div>
-          <div class="faq-answer">
-            Жоқ! LAN Share Manager ешқашан құпия сөздерді сұрамайды және сақтамайды. Барлық аутентификация Windows-тың стандартты қауіпсіздік механизмі (NTLMv2 / Kerberos) арқылы жүреді.
+          <div class="faq-answer" data-i18n="faq4A">
+            Windows PowerShell терезесінде: irm azamaperdeev05.github.io/lsm | iex деп теріп орындасаңыз болғаны.
+          </div>
+        </button>
+
+        <button class="faq-row">
+          <div class="faq-row-header">
+            <span data-i18n="faq5Q">Бағдарлама құпия сөздерді сақтай ма?</span>
+            <span class="faq-chevron">▼</span>
+          </div>
+          <div class="faq-answer" data-i18n="faq5A">
+            Жоқ! LAN Share Manager ешқашан құпия сөздерді сақтамайды. Барлық аутентификация Windows-тың стандартты қауіпсіздік хаттамасымен жүреді.
           </div>
         </button>
       </div>
     </section>
   </main>
 
-  <!-- Full-bleed Near-Black Footer with 24px Rounded Top Corners (Polarity Inversion) -->
+  <!-- Full-bleed Near-Black Footer with 24px Rounded Top Corners -->
   <footer class="footer-band">
     <div class="container">
       <div class="footer-grid">
         <div>
           <div class="footer-wordmark">LAN Share Manager.</div>
-          <p class="footer-tagline">
+          <p class="footer-tagline" data-i18n="footerTagline">
             Windows жүйесінде желілік SMB папкаларын бір батырмамен баптайтын ашық бастапқы кодты утилита.
           </p>
         </div>
 
         <div>
-          <div class="footer-col-title">Ресурстар</div>
+          <div class="footer-col-title" data-i18n="footerColResources">Ресурстар</div>
           <ul class="footer-links">
             <li><a href="https://github.com/Azamaperdeev05/lan-share-manager" target="_blank">GitHub Repository ↗</a></li>
             <li><a href="https://github.com/Azamaperdeev05/lan-share-manager/releases" target="_blank">Releases & Binaries</a></li>
-            <li><a href="components.html">Mobbin UI Kit Showcase ↗</a></li>
+            <li><a href="components.html">UI Component Kit ↗</a></li>
             <li><a href="https://azamaperdeev05.github.io/lsm/">PowerShell Launcher</a></li>
           </ul>
         </div>
 
         <div>
-          <div class="footer-col-title">Құжаттама</div>
+          <div class="footer-col-title" data-i18n="footerColDocs">Құжаттама</div>
           <ul class="footer-links">
-            <li><a href="#features">Мүмкіндіктер</a></li>
-            <li><a href="#compare">Салыстыру</a></li>
-            <li><a href="#cli">CLI анықтамалығы</a></li>
-            <li><a href="#faq">Сұрақ-жауап</a></li>
+            <li><a href="https://github.com/Azamaperdeev05/lan-share-manager/blob/main/README.md" target="_blank">🇬🇧 English README</a></li>
+            <li><a href="https://github.com/Azamaperdeev05/lan-share-manager/blob/main/README.kz.md" target="_blank">🇰🇿 Қазақша нұсқаулық</a></li>
+            <li><a href="https://github.com/Azamaperdeev05/lan-share-manager/blob/main/README.ru.md" target="_blank">🇷🇺 Документация (RU)</a></li>
+            <li><a href="#winr">Win + R Guide</a></li>
           </ul>
         </div>
       </div>
@@ -1450,6 +689,6 @@ body {
     </div>
   </footer>
 
-  <script src="script.js?v=20260924-mobbin"></script>
+  <script src="script.js?v=20260924-v2"></script>
 </body>
 </html>
