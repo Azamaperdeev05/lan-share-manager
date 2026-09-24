@@ -9,6 +9,7 @@ using System.Windows.Media;
 using LANShareManager.App.Views;
 using LANShareManager.Core.Enums;
 using LANShareManager.Core.Interfaces;
+using LANShareManager.Core.Localization;
 using LANShareManager.Core.Models;
 using LANShareManager.Core.Serialization;
 using LANShareManager.Infrastructure.Diagnostics;
@@ -58,6 +59,7 @@ public partial class MainWindow : Window
 
     private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
     {
+        ApplyLanguage(LocalizationService.CurrentLanguage);
         CheckAdministratorPrivileges();
         await RefreshNetworkInfoAsync();
         await RefreshSharesListAsync();
@@ -86,13 +88,13 @@ public partial class MainWindow : Window
 
         if (isAdmin)
         {
-            TxtAdminStatus.Text = "✓ Режим администратора: Активен";
+            TxtAdminStatus.Text = LocalizationService.GetString("AdminActive");
             TxtAdminStatus.Foreground = (Brush)FindResource("SuccessBrush");
             AdminBadgeBorder.Background = (Brush)FindResource("SuccessBgBrush");
         }
         else
         {
-            TxtAdminStatus.Text = "⚠ Требуются права администратора";
+            TxtAdminStatus.Text = LocalizationService.GetString("AdminRequired");
             TxtAdminStatus.Foreground = (Brush)FindResource("DangerBrush");
             AdminBadgeBorder.Background = new SolidColorBrush(Color.FromRgb(255, 235, 235));
 
@@ -160,6 +162,7 @@ public partial class MainWindow : Window
         bool hasSelection = GridShares.SelectedItem is SmbShareInfo;
         BtnOpenFolder.IsEnabled = hasSelection;
         BtnCopyPath.IsEnabled = hasSelection;
+        BtnShareInstructions.IsEnabled = hasSelection;
         BtnEditAccess.IsEnabled = hasSelection;
         BtnDiagnostics.IsEnabled = hasSelection;
         BtnRemoveShare.IsEnabled = hasSelection;
@@ -441,6 +444,72 @@ public partial class MainWindow : Window
         else
         {
             MessageBox.Show(this, $"Папка журналов: {logDir}", "Журнал логов", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+    }
+
+    private void ApplyLanguage(AppLanguage lang)
+    {
+        LocalizationService.SetLanguage(lang);
+
+        Title = LocalizationService.GetString("AppTitle", lang);
+        TxtAppTitle.Text = "LAN Share Manager";
+        TxtAppSub.Text = LocalizationService.GetString("AppSubtitle", lang);
+
+        TxtHostLabel.Text = LocalizationService.GetString("HostName", lang);
+        TxtIpLabel.Text = LocalizationService.GetString("LocalIp", lang);
+        TxtProfileLabel.Text = LocalizationService.GetString("NetworkProfile", lang);
+
+        BtnSwitchPrivate.Content = LocalizationService.GetString("BtnSwitchPrivate", lang);
+        BtnRefreshNetwork.Content = LocalizationService.GetString("BtnRefreshNetwork", lang);
+
+        TxtSharesTitle.Text = LocalizationService.GetString("SharesTitle", lang);
+        BtnConnectGuide.Content = LocalizationService.GetString("BtnConnectGuide", lang);
+        ChkShowAdminShares.Content = LocalizationService.GetString("ShowAdminShares", lang);
+        BtnCreateNewShare.Content = LocalizationService.GetString("BtnCreateShare", lang);
+
+        ColShareName.Header = LocalizationService.GetString("ColShareName", lang);
+        ColLocalPath.Header = LocalizationService.GetString("ColLocalPath", lang);
+        ColAccess.Header = LocalizationService.GetString("ColAccess", lang);
+        ColStatus.Header = LocalizationService.GetString("ColStatus", lang);
+
+        BtnOpenFolder.Content = LocalizationService.GetString("BtnOpenFolder", lang);
+        BtnCopyPath.Content = LocalizationService.GetString("BtnCopyPath", lang);
+        BtnShareInstructions.Content = LocalizationService.GetString("BtnHowToConnect", lang);
+        BtnEditAccess.Content = LocalizationService.GetString("BtnEditAccess", lang);
+        BtnDiagnostics.Content = LocalizationService.GetString("BtnDiagnostics", lang);
+        BtnRemoveShare.Content = LocalizationService.GetString("BtnRemove", lang);
+
+        BtnExport.Content = LocalizationService.GetString("BtnExport", lang);
+        BtnImport.Content = LocalizationService.GetString("BtnImport", lang);
+        BtnLogs.Content = LocalizationService.GetString("BtnLogs", lang);
+        TxtStatus.Text = LocalizationService.GetString("StatusReady", lang);
+
+        CheckAdministratorPrivileges();
+    }
+
+    private void BtnLangKk_Click(object sender, RoutedEventArgs e) => ApplyLanguage(AppLanguage.Kazakh);
+    private void BtnLangRu_Click(object sender, RoutedEventArgs e) => ApplyLanguage(AppLanguage.Russian);
+    private void BtnLangEn_Click(object sender, RoutedEventArgs e) => ApplyLanguage(AppLanguage.English);
+
+    private void BtnConnectGuide_Click(object sender, RoutedEventArgs e)
+    {
+        string shareName = (GridShares.SelectedItem as SmbShareInfo)?.Name ?? "SharedFolder";
+        var dlg = new ConnectInstructionsDialog(shareName, _currentNetworkInfo?.LocalIPv4, _currentNetworkInfo?.ComputerName)
+        {
+            Owner = this
+        };
+        dlg.ShowDialog();
+    }
+
+    private void BtnShareInstructions_Click(object sender, RoutedEventArgs e)
+    {
+        if (GridShares.SelectedItem is SmbShareInfo share)
+        {
+            var dlg = new ConnectInstructionsDialog(share.Name, _currentNetworkInfo?.LocalIPv4, _currentNetworkInfo?.ComputerName)
+            {
+                Owner = this
+            };
+            dlg.ShowDialog();
         }
     }
 }

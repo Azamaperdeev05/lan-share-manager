@@ -70,6 +70,19 @@ public partial class ShareResultDialog : Window
         }
     }
 
+    private void BtnOpenFullConnectGuide_Click(object sender, RoutedEventArgs e)
+    {
+        string shareName = _result.IpPath?.TrimStart('\\').Split('\\').LastOrDefault() ?? "Share";
+        string? ip = _result.IpPath?.TrimStart('\\').Split('\\').FirstOrDefault();
+        string? host = _result.HostnamePath?.TrimStart('\\').Split('\\').FirstOrDefault();
+
+        var guideDlg = new ConnectInstructionsDialog(shareName, ip, host)
+        {
+            Owner = this
+        };
+        guideDlg.ShowDialog();
+    }
+
     private void BtnClose_Click(object sender, RoutedEventArgs e)
     {
         Close();

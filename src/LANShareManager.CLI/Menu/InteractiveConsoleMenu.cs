@@ -4,6 +4,7 @@ using LANShareManager.CLI.Helpers;
 using LANShareManager.Core.Diagnostics;
 using LANShareManager.Core.Enums;
 using LANShareManager.Core.Interfaces;
+using LANShareManager.Core.Localization;
 using LANShareManager.Core.Models;
 using LANShareManager.Core.Validation;
 
@@ -44,30 +45,81 @@ public class InteractiveConsoleMenu
             Console.Clear();
             await PrintHeaderAsync();
 
+            var lang = LocalizationService.CurrentLanguage;
             Console.ForegroundColor = ConsoleColor.White;
-            Console.WriteLine(" МӘЗІРДЕН ТАҢДАҢЫЗ (ВЫБЕРИТЕ ДЕЙСТВИЕ):");
+            string menuTitle = lang switch
+            {
+                AppLanguage.Kazakh => " МӘЗІРДЕН ТАҢДАҢЫЗ:",
+                AppLanguage.English => " SELECT AN OPTION:",
+                _ => " ВЫБЕРИТЕ ДЕЙСТВИЕ:"
+            };
+            Console.WriteLine(menuTitle);
             Console.ForegroundColor = ConsoleColor.DarkGray;
             Console.WriteLine(new string('-', 76));
             Console.ResetColor();
 
-            Console.WriteLine(" [1] 📁 Жаңа ортақ папка құру (Интерактивті Шебер / Create Share Wizard)");
-            Console.WriteLine(" [2] 📋 Желідегі барлық папкаларды көру (List Shares)");
-            Console.WriteLine(" [3] 🔍 Папканың желілік байланысын диагностикалау (Run Diagnostics)");
-            Console.WriteLine(" [4] 🗑️  Ортақ папканы желіден өшіру (Remove Share)");
-            Console.WriteLine(" [5] 🛠️  Желі мен брандмауэрді автоматты жөндеу (Auto-Fix Network & SMB)");
-            Console.WriteLine(" [6] 🖥️  Графикалық интерфейсті (GUI) іске қосу");
-            Console.WriteLine(" [7] 💾 Ресурстарды JSON файлына сақтау / қалпына келтіру (Backup)");
-            Console.WriteLine(" [0] 🚪 Шығу (Выход)");
+            if (lang == AppLanguage.Kazakh)
+            {
+                Console.WriteLine(" [1] 📁 Жаңа ортақ папка құру (Интерактивті Шебер)");
+                Console.WriteLine(" [2] 📋 Желідегі барлық папкаларды көру");
+                Console.WriteLine(" [3] 🔍 Папканың желілік байланысын диагностикалау");
+                Console.WriteLine(" [4] 🗑️  Ортақ папканы желіден өшіру");
+                Console.WriteLine(" [5] 🛠️  Желі мен брандмауэрді автоматты жөндеу");
+                Console.WriteLine(" [6] 🖥️  Графикалық интерфейсті (GUI) іске қосу");
+                Console.WriteLine(" [7] 💾 Ресурстарды JSON файлына сақтау / қалпына келтіру");
+                Console.WriteLine(" [8] 🌐 Тілді ауыстыру / Сменить язык / Change Language");
+                Console.WriteLine(" [9] 💡 Win + R арқылы басқа компьютерден қосылу нұсқаулығы");
+                Console.WriteLine(" [0] 🚪 Шығу");
+            }
+            else if (lang == AppLanguage.English)
+            {
+                Console.WriteLine(" [1] 📁 Create New Shared Folder (Interactive Wizard)");
+                Console.WriteLine(" [2] 📋 View All Network Shares (List Shares)");
+                Console.WriteLine(" [3] 🔍 Diagnose Share Network Connectivity");
+                Console.WriteLine(" [4] 🗑️  Remove Network Share");
+                Console.WriteLine(" [5] 🛠️  Auto-Fix Network Profile & Firewall (SMB)");
+                Console.WriteLine(" [6] 🖥️  Launch Graphical Interface (GUI)");
+                Console.WriteLine(" [7] 💾 Backup & Restore Shares (JSON Export/Import)");
+                Console.WriteLine(" [8] 🌐 Change Language / Тілді ауыстыру / Сменить язык");
+                Console.WriteLine(" [9] 💡 Win + R Connection Instructions (How to Connect from Other PC)");
+                Console.WriteLine(" [0] 🚪 Exit");
+            }
+            else
+            {
+                Console.WriteLine(" [1] 📁 Создать новую общую папку (Мастер настройки)");
+                Console.WriteLine(" [2] 📋 Просмотреть все сетевые ресурсы");
+                Console.WriteLine(" [3] 🔍 Диагностика сетевого подключения ресурса");
+                Console.WriteLine(" [4] 🗑️  Удалить общий доступ к папке");
+                Console.WriteLine(" [5] 🛠️  Автоматическое исправление сети и брандмауэра");
+                Console.WriteLine(" [6] 🖥️  Запустить графический интерфейс (GUI)");
+                Console.WriteLine(" [7] 💾 Резервное копирование и восстановление (JSON)");
+                Console.WriteLine(" [8] 🌐 Сменить язык / Тілді ауыстыру / Change Language");
+                Console.WriteLine(" [9] 💡 Инструкция подключения через Win + R с другого ПК");
+                Console.WriteLine(" [0] 🚪 Выход");
+            }
+
             Console.ForegroundColor = ConsoleColor.DarkGray;
             Console.WriteLine(new string('-', 76));
             Console.ResetColor();
 
-            Console.Write("\nТаңдауыңызды енгізіңіз [1-7, 0]: ");
+            string promptText = lang switch
+            {
+                AppLanguage.Kazakh => "\nТаңдауыңызды енгізіңіз [1-9, 0]: ",
+                AppLanguage.English => "\nEnter your choice [1-9, 0]: ",
+                _ => "\nВведите ваш выбор [1-9, 0]: "
+            };
+            Console.Write(promptText);
             string? choice = Console.ReadLine()?.Trim();
 
             if (choice == "0")
             {
-                Console.WriteLine("\nLAN Share Manager жұмысын аяқтады. Сау болыңыз!");
+                string exitText = lang switch
+                {
+                    AppLanguage.Kazakh => "\nLAN Share Manager жұмысын аяқтады. Сау болыңыз!",
+                    AppLanguage.English => "\nLAN Share Manager closed. Goodbye!",
+                    _ => "\nLAN Share Manager завершил работу. До свидания!"
+                };
+                Console.WriteLine(exitText);
                 break;
             }
 
@@ -95,15 +147,27 @@ public class InteractiveConsoleMenu
                 case "7":
                     await BackupMenuAsync();
                     break;
+                case "8":
+                    ChangeLanguageInteractive();
+                    break;
+                case "9":
+                    await ShowConnectGuideInteractiveAsync();
+                    break;
                 default:
                     Console.ForegroundColor = ConsoleColor.Yellow;
-                    Console.WriteLine("Қате таңдау. 0-ден 7-ге дейінгі санды таңдаңыз.");
+                    Console.WriteLine("Қате таңдау / Неверный выбор / Invalid choice. [1-9, 0]");
                     Console.ResetColor();
                     break;
             }
 
             Console.ForegroundColor = ConsoleColor.DarkGray;
-            Console.WriteLine("\nЖалғастыру үшін кез келген пернені басыңыз...");
+            string anyKey = lang switch
+            {
+                AppLanguage.Kazakh => "\nЖалғастыру үшін кез келген пернені басыңыз...",
+                AppLanguage.English => "\nPress any key to continue...",
+                _ => "\nНажмите любую клавишу для продолжения..."
+            };
+            Console.WriteLine(anyKey);
             Console.ResetColor();
             Console.ReadKey(true);
         }
@@ -323,26 +387,32 @@ public class InteractiveConsoleMenu
         }
 
         // Print Victory Card
+        var netInfo = await _networkService.GetNetworkInfoAsync();
+        var guide = LocalizationService.GetConnectGuide(shareName, netInfo.LocalIPv4, netInfo.ComputerName);
+
         Console.WriteLine();
         Console.ForegroundColor = ConsoleColor.Green;
         Console.WriteLine("╔══════════════════════════════════════════════════════════════════════════════════╗");
-        Console.WriteLine("║ ✓ ОРТАҚ ПАПКА СӘТТІ ҚҰРЫЛДЫ ЖӘНЕ ЖЕЛІДЕ АШЫҚ!                                    ║");
+        Console.WriteLine($"║ ✓ {LocalizationService.GetString("SuccessTitle").ToUpperInvariant().PadRight(78)} ║");
         Console.WriteLine("╠══════════════════════════════════════════════════════════════════════════════════╣");
         Console.ResetColor();
 
-        Console.WriteLine($"║ 📁 Жергілікті жол: {result.LocalPath}");
+        Console.WriteLine($"║ 📁 Жергілікті жол (Local Path): {result.LocalPath}");
         Console.ForegroundColor = ConsoleColor.Cyan;
-        Console.WriteLine($"║ 🌐 Компьютер атауы арқылы: {result.HostnamePath}");
-        Console.WriteLine($"║ 🔢 IP мекенжай арқылы:     {result.IpPath}");
+        Console.WriteLine($"║ 🌐 Компьютер атауы арқылы:     {guide.HostnamePath}");
+        Console.WriteLine($"║ 🔢 Ұсынылатын IP мекенжай:      {guide.RecommendedPath}");
         Console.ResetColor();
         Console.WriteLine("║");
 
         Console.ForegroundColor = ConsoleColor.Yellow;
-        Console.WriteLine("║ 💡 БАСҚА КОМПЬЮТЕРДЕН ҚАЛАЙ ҚОСЫЛУ КЕРЕК (КАК ПОДКЛЮЧИТЬСЯ С ДРУГОГО ПК):");
+        Console.WriteLine($"║ 💡 {guide.Title.ToUpperInvariant()}:");
         Console.ForegroundColor = ConsoleColor.White;
-        Console.WriteLine("║    1. Басқа компьютердің пернетақтасынан Win + R түймелерін басыңыз.");
-        Console.WriteLine($"║    2. Ашылған 'Выполнить' терезесіне мына жолды көшіріп қойыңыз: {result.IpPath}");
-        Console.WriteLine("║    3. 'Enter' басыңыз — ортақ папка бірден ашылады!");
+        Console.WriteLine($"║    1. {guide.Step1}");
+        Console.WriteLine($"║    2. {guide.Step2}");
+        Console.WriteLine($"║    3. {guide.Step3}");
+        Console.ForegroundColor = ConsoleColor.DarkGray;
+        Console.WriteLine($"║    4. {guide.TipCredentials}");
+        Console.WriteLine($"║    5. {guide.TipDriveMap} {guide.CmdNetUse}");
         Console.ResetColor();
 
         Console.ForegroundColor = ConsoleColor.Green;
@@ -659,5 +729,131 @@ public class InteractiveConsoleMenu
                 Console.WriteLine($"{c.ShareName,-18} -> {(res.Success ? "✓ Сәтті" : "✗ " + res.Message)}");
             }
         }
+    }
+
+    private void ChangeLanguageInteractive()
+    {
+        Console.ForegroundColor = ConsoleColor.Cyan;
+        Console.WriteLine("=== [8] ТІЛДІ ТАҢДАУ / ВЫБОР ЯЗЫКА / SELECT LANGUAGE ===");
+        Console.ResetColor();
+        Console.WriteLine("  [1] 🇰🇿 Қазақша (Kazakh)");
+        Console.WriteLine("  [2] 🇷🇺 Русский (Russian)");
+        Console.WriteLine("  [3] 🇬🇧 English (English)");
+        Console.Write("\nТаңдауыңыз [1/2/3]: ");
+
+        string? langChoice = Console.ReadLine()?.Trim();
+        switch (langChoice)
+        {
+            case "1":
+                LocalizationService.SetLanguage(AppLanguage.Kazakh);
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("\n✓ Тіл Қазақша болып өзгертілді.");
+                break;
+            case "2":
+                LocalizationService.SetLanguage(AppLanguage.Russian);
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("\n✓ Язык успешно изменен на Русский.");
+                break;
+            case "3":
+                LocalizationService.SetLanguage(AppLanguage.English);
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("\n✓ Language changed to English successfully.");
+                break;
+            default:
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine("Тіл өзгертілмеді / Язык не изменен / Language unchanged.");
+                break;
+        }
+        Console.ResetColor();
+    }
+
+    private async Task ShowConnectGuideInteractiveAsync()
+    {
+        var lang = LocalizationService.CurrentLanguage;
+        Console.ForegroundColor = ConsoleColor.Cyan;
+        string headerTitle = lang switch
+        {
+            AppLanguage.Kazakh => "=== [9] WIN + R АРҚЫЛЫ БАСҚА КОМПЬЮТЕРДЕН ҚОСЫЛУ НҰСҚАУЛЫҒЫ ===",
+            AppLanguage.English => "=== [9] HOW TO CONNECT FROM ANOTHER COMPUTER VIA WIN + R ===",
+            _ => "=== [9] ИНСТРУКЦИЯ ПОДКЛЮЧЕНИЯ ЧЕРЕЗ WIN + R С ДРУГОГО ПК ==="
+        };
+        Console.WriteLine(headerTitle);
+        Console.ResetColor();
+
+        var netInfo = await _networkService.GetNetworkInfoAsync();
+        var shares = await _smbService.GetSharesAsync(includeSpecial: false);
+
+        string targetShareName = "SharedFolder";
+        if (shares.Count > 0)
+        {
+            Console.WriteLine(lang switch
+            {
+                AppLanguage.Kazakh => "Қай ортақ папкаға қосылу нұсқаулығы қажет?",
+                AppLanguage.English => "Select shared folder for connection guide:",
+                _ => "Выберите общую папку для инструкции подключения:"
+            });
+
+            for (int i = 0; i < shares.Count; i++)
+            {
+                Console.WriteLine($"  [{i + 1}] {shares[i].Name} ({shares[i].Path})");
+            }
+            Console.Write($"\nТаңдауыңыз [1-{shares.Count}, Enter бассаңыз '{shares[0].Name}']: ");
+            string? input = Console.ReadLine()?.Trim();
+            if (int.TryParse(input, out int idx) && idx >= 1 && idx <= shares.Count)
+            {
+                targetShareName = shares[idx - 1].Name;
+            }
+            else
+            {
+                targetShareName = shares[0].Name;
+            }
+        }
+        else
+        {
+            Console.Write(lang switch
+            {
+                AppLanguage.Kazakh => "Ортақ папка атауын енгізіңіз [Enter - 'SharedFolder']: ",
+                AppLanguage.English => "Enter share name [Enter - 'SharedFolder']: ",
+                _ => "Введите имя общего ресурса [Enter - 'SharedFolder']: "
+            });
+            string? customName = Console.ReadLine()?.Trim();
+            if (!string.IsNullOrWhiteSpace(customName))
+            {
+                targetShareName = customName;
+            }
+        }
+
+        var guide = LocalizationService.GetConnectGuide(targetShareName, netInfo.LocalIPv4, netInfo.ComputerName);
+
+        Console.WriteLine();
+        Console.ForegroundColor = ConsoleColor.Green;
+        Console.WriteLine("╔══════════════════════════════════════════════════════════════════════════════════╗");
+        Console.WriteLine($"║ 💡 {guide.Title.ToUpperInvariant().PadRight(76)} ║");
+        Console.WriteLine("╠══════════════════════════════════════════════════════════════════════════════════╣");
+        Console.ResetColor();
+
+        Console.ForegroundColor = ConsoleColor.White;
+        Console.WriteLine($"║  1-ҚАДАМ / STEP 1: {guide.Step1}");
+        Console.WriteLine("║");
+        Console.ForegroundColor = ConsoleColor.Cyan;
+        Console.WriteLine($"║  2-ҚАДАМ / STEP 2 (ҰСЫНЫЛАДЫ / РЕКОМЕНДУЕТСЯ):");
+        Console.ForegroundColor = ConsoleColor.Yellow;
+        Console.WriteLine($"║     {guide.RecommendedPath}");
+        Console.ForegroundColor = ConsoleColor.Cyan;
+        Console.WriteLine($"║     (Компьютер атауы бойынша / By Hostname: {guide.HostnamePath})");
+        Console.WriteLine("║");
+        Console.ForegroundColor = ConsoleColor.White;
+        Console.WriteLine($"║  3-ҚАДАМ / STEP 3: {guide.Step3}");
+        Console.WriteLine("║");
+        Console.ForegroundColor = ConsoleColor.DarkYellow;
+        Console.WriteLine($"║  🔑 ПАРОЛЬ НЕ КІРУ СҰРАЛСА / CREDENTIALS:");
+        Console.WriteLine($"║     {guide.TipCredentials}");
+        Console.WriteLine("║");
+        Console.ForegroundColor = ConsoleColor.Magenta;
+        Console.WriteLine($"║  💾 ТҰРАҚТЫ ДИСК РЕТІНДЕ БЕКІТУ (CMD / Командная строка):");
+        Console.WriteLine($"║     {guide.CmdNetUse}");
+        Console.ForegroundColor = ConsoleColor.Green;
+        Console.WriteLine("╚══════════════════════════════════════════════════════════════════════════════════╝");
+        Console.ResetColor();
     }
 }

@@ -46,7 +46,7 @@
                     </Grid>
 
                     <TextBlock Text="IP путь (IP path):" FontWeight="SemiBold" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,2" />
-                    <Grid Margin="0,0,0,16">
+                    <Grid Margin="0,0,0,14">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="Auto" />
@@ -54,6 +54,17 @@
                         <TextBox x:Name="TxtIpPath" IsReadOnly="True" Background="#F9F9F9" Padding="6" BorderBrush="{StaticResource CardBorderBrush}" />
                         <Button Grid.Column="1" Content="Копировать" Style="{StaticResource SecondaryButton}" Height="30" Margin="6,0,0,0" Click="BtnCopyIp_Click" />
                     </Grid>
+
+                    <!-- How to connect from other PC -->
+                    <Border Background="#F0FDF4" BorderBrush="#BBF7D0" BorderThickness="1" CornerRadius="8" Padding="12" Margin="0,0,0,16">
+                        <StackPanel>
+                            <TextBlock Text="💡 Басқа компьютерден қалай қосылу керек? (Win + R)" FontWeight="Bold" Foreground="#15803D" FontSize="13" Margin="0,0,0,4" />
+                            <TextBlock Text="1. Басқа компьютердің пернетақтасынан Win + R түймелерін басыңыз." Foreground="#166534" FontSize="12" Margin="0,0,0,2" />
+                            <TextBlock Text="2. 'Выполнить' терезесіне мына жолды көшіріп қойыңыз (IP жолы)." Foreground="#166534" FontSize="12" Margin="0,0,0,2" />
+                            <TextBlock Text="3. Enter басыңыз — ортақ папка лезде ашылады!" Foreground="#166534" FontSize="12" Margin="0,0,0,8" />
+                            <Button x:Name="BtnOpenFullConnectGuide" Content="🌐 Толық нұсқаулықты көру (Подробная инструкция Win+R)..." Style="{StaticResource SecondaryButton}" Height="28" HorizontalAlignment="Left" Click="BtnOpenFullConnectGuide_Click" />
+                        </StackPanel>
+                    </Border>
 
                     <Separator Margin="0,0,0,14" />
 
