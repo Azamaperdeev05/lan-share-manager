@@ -28,7 +28,7 @@
                 <StackPanel>
                     <!-- Folder Path -->
                     <TextBlock Text="Папка:" FontWeight="SemiBold" Margin="0,0,0,6" />
-                    <Grid Margin="0,0,0,14">
+                    <Grid Margin="0,0,0,10">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="Auto" />
@@ -36,10 +36,12 @@
                         <TextBox x:Name="TxtFolderPath" Grid.Column="0" Height="32" VerticalContentAlignment="Center" Padding="8,0" TextChanged="TxtFolderPath_TextChanged" />
                         <Button Grid.Column="1" Content="Обзор..." Style="{StaticResource SecondaryButton}" Height="32" Margin="8,0,0,0" Click="BtnBrowse_Click" />
                     </Grid>
+                    <TextBlock x:Name="TxtPathFeedback" FontSize="11" Margin="2,-4,0,10" TextWrapping="Wrap" Visibility="Collapsed" />
 
                     <!-- Share Name -->
                     <TextBlock Text="Имя общего ресурса (Share name):" FontWeight="SemiBold" Margin="0,0,0,6" />
-                    <TextBox x:Name="TxtShareName" Height="32" VerticalContentAlignment="Center" Padding="8,0" Margin="0,0,0,16" />
+                    <TextBox x:Name="TxtShareName" Height="32" VerticalContentAlignment="Center" Padding="8,0" Margin="0,0,0,8" TextChanged="TxtShareName_TextChanged" />
+                    <TextBlock x:Name="TxtShareFeedback" FontSize="11" Margin="2,-2,0,12" TextWrapping="Wrap" Visibility="Collapsed" />
 
                     <!-- Access Mode -->
                     <TextBlock Text="Уровень доступа для локальной сети:" FontWeight="SemiBold" Margin="0,0,0,6" />
@@ -54,6 +56,11 @@
                     <CheckBox x:Name="ChkFirewall" Content="Включить правила брандмауэра Windows для SMB (TCP 445)" IsChecked="True" Margin="0,4" />
                     <CheckBox x:Name="ChkSubfolders" Content="Применить разрешения NTFS к подпапкам и файлам (наследование)" IsChecked="True" Margin="0,4" />
                     <CheckBox x:Name="ChkTestAfterCreation" Content="Проверить доступность ресурса после создания (диагностика)" IsChecked="True" Margin="0,4" />
+
+                    <!-- Pre-flight Validation Banner -->
+                    <Border x:Name="BorderValidationSummary" Background="#FEF2F2" BorderBrush="#FCA5A5" BorderThickness="1" CornerRadius="6" Padding="10,8" Margin="0,8,0,0" Visibility="Collapsed">
+                        <TextBlock x:Name="TxtValidationSummary" FontSize="12" Foreground="#991B1B" TextWrapping="Wrap" />
+                    </Border>
                 </StackPanel>
             </ScrollViewer>
         </Border>

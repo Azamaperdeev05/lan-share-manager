@@ -180,7 +180,7 @@ public partial class MainWindow : Window
 
     private async void BtnCreateNewShare_Click(object sender, RoutedEventArgs e)
     {
-        var dlg = new CreateShareDialog { Owner = this };
+        var dlg = new CreateShareDialog(_currentShares) { Owner = this };
         if (dlg.ShowDialog() == true && dlg.Request != null)
         {
             TxtStatus.Text = $"Создание ресурса '{dlg.Request.ShareName}'...";

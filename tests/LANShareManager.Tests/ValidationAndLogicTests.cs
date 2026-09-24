@@ -86,6 +86,65 @@ public class ValidationAndLogicTests
         Assert.False(result.IsValid);
     }
 
+    [Theory]
+    [InlineData("ADMIN$")]
+    [InlineData("IPC$")]
+    [InlineData("PRINT$")]
+    public void ValidateShareName_AdministrativeShares_ReturnsFailure(string name)
+    {
+        var result = ShareInputValidator.ValidateShareName(name);
+        Assert.False(result.IsValid);
+        Assert.Contains("административным ресурсом", result.ErrorMessage);
+    }
+
+    [Fact]
+    public void ValidateShareName_ExistingCollision_ReturnsWarning()
+    {
+        var existing = new[] { "ExistingShare", "Public" };
+        var result = ShareInputValidator.ValidateShareName("EXISTINGSHARE", existing);
+        Assert.True(result.IsValid);
+        Assert.Equal(ValidationSeverity.Warning, result.Severity);
+        Assert.Contains("уже существует", result.Message);
+    }
+
+    [Fact]
+    public void ValidateShareName_HiddenShareWithDollar_ReturnsWarning()
+    {
+        var result = ShareInputValidator.ValidateShareName("Confidential$");
+        Assert.True(result.IsValid);
+        Assert.Equal(ValidationSeverity.Warning, result.Severity);
+        Assert.Contains("скрытым", result.Message);
+    }
+
+    [Theory]
+    [InlineData("C:\\Windows")]
+    [InlineData("C:\\Windows\\System32")]
+    public void ValidateFolderPath_SystemDirectories_ReturnsFailure(string path)
+    {
+        var result = ShareInputValidator.ValidateFolderPath(path);
+        Assert.False(result.IsValid);
+        Assert.Contains("Запрещено создавать общий доступ", result.ErrorMessage);
+    }
+
+    [Fact]
+    public void ValidateFolderPath_DriveRoot_ReturnsWarning()
+    {
+        var result = ShareInputValidator.ValidateFolderPath("C:\\");
+        Assert.True(result.IsValid);
+        Assert.Equal(ValidationSeverity.Warning, result.Severity);
+        Assert.Contains("корень диска", result.Message);
+    }
+
+    [Fact]
+    public void ValidateFolderPath_ExistingFolderPublished_ReturnsInfo()
+    {
+        var existing = new[] { ("PublicDocs", "D:\\Shared\\Folder") };
+        var result = ShareInputValidator.ValidateFolderPath("D:\\Shared\\Folder", existing);
+        Assert.True(result.IsValid);
+        Assert.Equal(ValidationSeverity.Info, result.Severity);
+        Assert.Contains("уже опубликована", result.Message);
+    }
+
     [Fact]
     public void NetworkService_IsApipa_CorrectlyIdentifiesLinkLocal()
     {

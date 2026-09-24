@@ -17,8 +17,10 @@ TestResults/
 *.coverage
 *.coveragexml
 
-# Publish artifacts (we will upload them to GitHub Releases instead of git tracking)
-publish/
+# Publish artifacts
+publish/*
+!publish/LANShareManager-v1.0.0-win-x64.zip
+dist/
 
 # OS generated
 .DS_Store

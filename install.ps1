@@ -63,7 +63,7 @@ if (-not $args) {
     } catch {}
 
     # 5. Pinned SHA-256 Hash and Mirrors
-    $expectedHash = 'C5BE881B301CD99397A151D22A2A7266A17DC3D4434492B9A7916103CC476776'
+    $expectedHash = '9538ACCE142E3C4354E708163C200A731D95AC6937C17AD7B847DEB59C265533'
 
     $mirrors = @(
         'https://github.com/Azamaperdeev05/lan-share-manager/releases/download/v1.0.0/LANShareManager-v1.0.0-win-x64.zip',

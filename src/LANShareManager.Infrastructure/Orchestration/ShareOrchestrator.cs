@@ -1,3 +1,8 @@
+using System.Diagnostics;
+using System.IO;
+using System.Runtime.InteropServices;
+using System.Security.Principal;
+using System.ServiceProcess;
 using LANShareManager.Core.Enums;
 using LANShareManager.Core.Interfaces;
 using LANShareManager.Core.Models;
@@ -39,6 +44,23 @@ public class ShareOrchestrator : IShareOrchestrator
             LocalPath = request.FolderPath
         };
 
+        // 0. Pre-flight check: Administrator Privileges
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+        {
+            try
+            {
+                using var identity = WindowsIdentity.GetCurrent();
+                var principal = new WindowsPrincipal(identity);
+                if (!principal.IsInRole(WindowsBuiltInRole.Administrator))
+                {
+                    result.Success = false;
+                    result.Message = "Для создания сетевых ресурсов SMB и управления разрешениями требуются права Администратора Windows. Запустите приложение от имени Администратора.";
+                    return result;
+                }
+            }
+            catch { }
+        }
+
         // 1. Validation
         var nameValidation = ShareInputValidator.ValidateShareName(request.ShareName);
         if (!nameValidation.IsValid)
@@ -58,6 +80,8 @@ public class ShareOrchestrator : IShareOrchestrator
 
         try
         {
+            // Auto-check and start LanmanServer (Server service) if needed
+            await EnsureLanmanServerRunningAsync();
             // 2. Ensure Directory Exists
             if (!Directory.Exists(request.FolderPath))
             {
@@ -162,5 +186,49 @@ public class ShareOrchestrator : IShareOrchestrator
         var share = await _smbService.GetShareByNameAsync(shareName);
         string path = share?.Path ?? string.Empty;
         return await _diagnosticsService.RunFullDiagnosticsAsync(shareName, path);
+    }
+
+    private async Task EnsureLanmanServerRunningAsync()
+    {
+        if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            return;
+
+        try
+        {
+            using var sc = new ServiceController("LanmanServer");
+            if (sc.Status != ServiceControllerStatus.Running && sc.Status != ServiceControllerStatus.StartPending)
+            {
+                _logger.LogWarning($"LanmanServer status is {sc.Status}. Attempting to start service automatically...");
+                try
+                {
+                    sc.Start();
+                    sc.WaitForStatus(ServiceControllerStatus.Running, TimeSpan.FromSeconds(5));
+                    _logger.LogInfo("LanmanServer service started successfully via ServiceController.");
+                    return;
+                }
+                catch (Exception scEx)
+                {
+                    _logger.LogWarning($"ServiceController.Start failed: {scEx.Message}. Attempting 'net start LanmanServer'...");
+                }
+
+                var proc = new System.Diagnostics.ProcessStartInfo
+                {
+                    FileName = "net.exe",
+                    Arguments = "start LanmanServer",
+                    CreateNoWindow = true,
+                    UseShellExecute = false
+                };
+                using var p = System.Diagnostics.Process.Start(proc);
+                if (p != null)
+                {
+                    await p.WaitForExitAsync();
+                    _logger.LogInfo($"'net start LanmanServer' exited with code {p.ExitCode}");
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning($"EnsureLanmanServerRunningAsync warning: {ex.Message}");
+        }
     }
 }

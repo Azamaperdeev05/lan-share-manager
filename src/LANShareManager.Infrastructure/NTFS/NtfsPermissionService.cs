@@ -34,6 +34,25 @@ public class NtfsPermissionService : INtfsPermissionService
         {
             try
             {
+                // Pre-flight check: Non-NTFS drives (FAT32, exFAT) do not support NTFS ACLs.
+                // In such cases, security is managed purely at the SMB share permission level.
+                string? root = Path.GetPathRoot(folderPath);
+                if (!string.IsNullOrWhiteSpace(root))
+                {
+                    try
+                    {
+                        var drive = new DriveInfo(root);
+                        if (drive.IsReady &&
+                            !drive.DriveFormat.Equals("NTFS", StringComparison.OrdinalIgnoreCase) &&
+                            !drive.DriveFormat.Equals("ReFS", StringComparison.OrdinalIgnoreCase))
+                        {
+                            _logger.LogInfo($"Drive '{root}' is formatted as {drive.DriveFormat} (no NTFS ACL support). Permissions enforced via SMB.");
+                            return true;
+                        }
+                    }
+                    catch { }
+                }
+
                 var directoryInfo = new DirectoryInfo(folderPath);
                 DirectorySecurity security = directoryInfo.GetAccessControl(AccessControlSections.Access);
 
@@ -150,15 +169,36 @@ public class NtfsPermissionService : INtfsPermissionService
             _ => "(OI)(CI)M"
         };
 
-        string args = $"\"{folderPath}\" /grant:r \"*S-1-1-0\":{permChar} /T /C /Q";
-        var res = _runner.RunProcessAsync("icacls.exe", args).GetAwaiter().GetResult();
-        if (res.Success)
+        string safePath = folderPath.TrimEnd('\\');
+        string args = $"\"{safePath}\" /grant:r \"*S-1-1-0\":{permChar} /T /C /Q";
+
+        try
         {
-            _logger.LogInfo($"Successfully applied NTFS permissions via icacls on '{folderPath}'.");
-            return true;
+            var psi = new System.Diagnostics.ProcessStartInfo
+            {
+                FileName = "icacls.exe",
+                Arguments = args,
+                CreateNoWindow = true,
+                UseShellExecute = false,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true
+            };
+            using var proc = System.Diagnostics.Process.Start(psi);
+            if (proc != null)
+            {
+                proc.WaitForExit(10000);
+                if (proc.ExitCode == 0)
+                {
+                    _logger.LogInfo($"Successfully applied NTFS permissions via icacls on '{folderPath}'.");
+                    return true;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError($"icacls execution failed on '{folderPath}': {ex.Message}");
         }
 
-        _logger.LogError($"icacls failed on '{folderPath}': {res.StandardError}");
         return false;
     }
 
