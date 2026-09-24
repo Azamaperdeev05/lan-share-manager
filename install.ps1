@@ -163,6 +163,72 @@ if (-not $args) {
             return
         }
 
+        # Check if .NET 8 Desktop Runtime is installed
+        $hasDesktopRuntime = $false
+        try {
+            $runtimes = & dotnet --list-runtimes 2>$null
+            if ($runtimes -match 'Microsoft\.WindowsDesktop\.App\s+8\.') {
+                $hasDesktopRuntime = $true
+            }
+        } catch { }
+
+        if (-not $hasDesktopRuntime) {
+            $regKeys = @(
+                'HKLM:\SOFTWARE\dotnet\Setup\InstalledVersions\x64\sharedfx\Microsoft.WindowsDesktop.App',
+                'HKLM:\SOFTWARE\WOW6432Node\dotnet\Setup\InstalledVersions\x64\sharedfx\Microsoft.WindowsDesktop.App'
+            )
+            foreach ($key in $regKeys) {
+                if (Test-Path $key) {
+                    $sub = Get-ItemProperty $key -ErrorAction SilentlyContinue
+                    if ($sub -and ($sub.PSObject.Properties.Name -match '^8\.')) {
+                        $hasDesktopRuntime = $true
+                        break
+                    }
+                }
+            }
+        }
+
+        if (-not $hasDesktopRuntime) {
+            $desktopDir = "$env:ProgramFiles\dotnet\shared\Microsoft.WindowsDesktop.App"
+            if (Test-Path $desktopDir) {
+                $versions = Get-ChildItem -Path $desktopDir -Directory -ErrorAction SilentlyContinue | Where-Object { $_.Name -like '8.*' }
+                if ($versions) {
+                    $hasDesktopRuntime = $true
+                }
+            }
+        }
+
+        if (-not $hasDesktopRuntime) {
+            Write-Host "Notice: Microsoft .NET 8 Desktop Runtime is required for GUI." -ForegroundColor Yellow
+            Write-Host "Downloading official Microsoft .NET 8 Desktop Runtime (x64)... " -NoNewline
+            $dotnetUrl = 'https://aka.ms/dotnet/8.0/windowsdesktop-runtime-win-x64.exe'
+            $dotnetInstaller = "$tempExtract\dotnet8-desktop-runtime-installer.exe"
+
+            try {
+                $webClient = New-Object System.Net.WebClient
+                $webClient.DownloadFile($dotnetUrl, $dotnetInstaller)
+                Write-Host "OK (Downloaded)" -ForegroundColor Green
+
+                Write-Host "Installing .NET 8 Desktop Runtime (please wait)... " -NoNewline
+                $isAdmin = [bool]([Security.Principal.WindowsIdentity]::GetCurrent().Groups -match 'S-1-5-32-544')
+                if ($isAdmin) {
+                    $installProc = Start-Process -FilePath $dotnetInstaller -ArgumentList '/install /quiet /norestart' -PassThru -Wait
+                } else {
+                    $installProc = Start-Process -FilePath $dotnetInstaller -ArgumentList '/install /passive /norestart' -Verb RunAs -PassThru -Wait
+                }
+
+                if ($installProc.ExitCode -eq 0 -or $installProc.ExitCode -eq 3010) {
+                    Write-Host "OK (Installed ✓)" -ForegroundColor Green
+                } else {
+                    Write-Host "ExitCode: $($installProc.ExitCode)" -ForegroundColor Yellow
+                }
+            }
+            catch {
+                Write-Warning "Could not automatically install .NET 8 runtime: $($_.Exception.Message)"
+                Write-Host "Please install .NET 8 Desktop Runtime manually from: $dotnetUrl" -ForegroundColor Cyan
+            }
+        }
+
         Write-Host "Launching LAN Share Manager with Administrator privileges..." -ForegroundColor Cyan
         $isAdmin = [bool]([Security.Principal.WindowsIdentity]::GetCurrent().Groups -match 'S-1-5-32-544')
 
