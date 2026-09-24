@@ -128,8 +128,33 @@ if (-not $args) {
         Write-Host "Extracting application to temporary workspace... " -NoNewline
         New-Item -ItemType Directory -Path $tempExtract -Force | Out-Null
         
-        # Unzip
-        [System.IO.Compression.ZipFile]::ExtractToDirectory($tempZip, $tempExtract)
+        # Unzip with robust 3-tier fallback
+        $unzipped = $false
+        try {
+            Add-Type -AssemblyName 'System.IO.Compression.FileSystem' -ErrorAction Stop
+            [System.IO.Compression.ZipFile]::ExtractToDirectory($tempZip, $tempExtract)
+            $unzipped = $true
+        } catch { }
+
+        if (-not $unzipped) {
+            try {
+                Expand-Archive -Path $tempZip -DestinationPath $tempExtract -Force -ErrorAction Stop
+                $unzipped = $true
+            } catch { }
+        }
+
+        if (-not $unzipped) {
+            try {
+                tar -xf $tempZip -C $tempExtract
+                $unzipped = $true
+            } catch { }
+        }
+
+        if (-not $unzipped) {
+            Write-Host "FAILED!" -ForegroundColor Red
+            Write-Error "Could not extract ZIP archive using any available extractor."
+            return
+        }
         Write-Host "OK" -ForegroundColor Green
 
         $guiExe = "$tempExtract\LANShareManagerGUI.exe"
