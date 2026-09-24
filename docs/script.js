@@ -1,64 +1,64 @@
-// Multilingual Translations Dictionary
+// Multilingual Translations Dictionary (Strictly Mobbin Voice - Sentences with terminal periods)
 const translations = {
   kz: {
-    badge: "Windows 10 & 11 • .NET 8 • Ашық бастапқы код",
-    heroTitle: "Жергілікті желіде папкаларды <span>1 кликпен</span> ортақ ету",
-    heroSubtitle: "Ешқандай күрделі баптауларсыз. Брандмауэрді, NTFS рұқсаттарын және желілік мекенжайларды автоматты реттейтін ақылды Windows утилитасы.",
+    badge: "Windows 10 & 11 • .NET 8 • 100% Open Source.",
+    heroTitle: "Жергілікті желідегі папкаларды 1 кликпен ортақ етіңіз.",
+    heroSubtitle: "Ешқандай күрделі қолмен баптауларсыз. Брандмауэрді, NTFS қауіпсіздік ережелерін және желілік мекенжайларды автоматты синхрондайтын заманауи Windows утилитасы.",
     copyText: "Көшіру",
     copiedText: "Көшірілді! ✓",
     btnDownload: "ZIP репозиторийден жүктеу",
-    btnGithub: "GitHub репозиторийі",
+    btnGithub: "GitHub репозиторийі ↗",
     navFeatures: "Мүмкіндіктер",
     navCompare: "Салыстыру",
-    navCli: "CLI Консоль",
-    navSecurity: "Қауіпсіздік",
+    navCli: "CLI",
     navFaq: "Сұрақ-жауап",
-    secCompareTitle: "Қолмен баптау мен LAN Share Manager айырмашылығы",
-    secCompareSubtitle: "Windows стандартты жолы қаншалықты күрделі және утилита қалай жеңілдетеді?",
-    secFeaturesTitle: "Неліктен мыңдаған сисадминдер бізді таңдайды?",
-    secTerminalTitle: "Интерактивті CLI Симуляторы",
-    secSecurityTitle: "Axiom / MAS стиліндегі Қауіпсіздік Архитектурасы",
-    secFaqTitle: "Жиі қойылатын сұрақтар"
+    secShowcaseTitle: "Графикалық және Консольдік орта.",
+    secCompareTitle: "Қолмен баптау мен LAN Share Manager айырмашылығы.",
+    secCompareSubtitle: "Windows-тың стандартты ортақ ету жолы неліктен қатеге толы және біз оны қалай 3 секундқа түсірдік?",
+    secFeaturesTitle: "Негізгі мүмкіндіктер мен архитектура.",
+    secTerminalTitle: "Интерактивті CLI Симуляторы.",
+    secSecurityTitle: "Axiom / MAS стиліндегі қауіпсіздік.",
+    secFaqTitle: "Жиі қойылатын сұрақтар."
   },
   ru: {
-    badge: "Windows 10 & 11 • .NET 8 • Открытый исходный код",
-    heroTitle: "Общий доступ к папкам в локальной сети <span>в 1 клик</span>",
+    badge: "Windows 10 & 11 • .NET 8 • 100% Open Source.",
+    heroTitle: "Общий доступ к папкам в локальной сети в 1 клик.",
     heroSubtitle: "Никаких сложных ручных настроек. Умная Windows-утилита, автоматически настраивающая Брандмауэр, NTFS разрешения и сетевые пути.",
     copyText: "Копировать",
     copiedText: "Скопировано! ✓",
     btnDownload: "Скачать ZIP архив",
-    btnGithub: "Репозиторий на GitHub",
+    btnGithub: "Репозиторий на GitHub ↗",
     navFeatures: "Возможности",
     navCompare: "Сравнение",
-    navCli: "CLI Консоль",
-    navSecurity: "Безопасность",
+    navCli: "CLI",
     navFaq: "Частые вопросы",
-    secCompareTitle: "Ручная настройка Windows против LAN Share Manager",
+    secShowcaseTitle: "Графический и Консольный интерфейс.",
+    secCompareTitle: "Ручная настройка Windows против LAN Share Manager.",
     secCompareSubtitle: "Насколько мучителен стандартный путь Windows и как утилита решает это за 3 секунды?",
-    secFeaturesTitle: "Ключевые преимущества и архитектура",
-    secTerminalTitle: "Интерактивный терминал CLI",
-    secSecurityTitle: "Архитектура безопасности в стиле Axiom / MAS",
-    secFaqTitle: "Часто задаваемые вопросы"
+    secFeaturesTitle: "Ключевые преимущества и архитектура.",
+    secTerminalTitle: "Интерактивный терминал CLI.",
+    secSecurityTitle: "Архитектура безопасности в стиле Axiom / MAS.",
+    secFaqTitle: "Часто задаваемые вопросы."
   },
   en: {
-    badge: "Windows 10 & 11 • .NET 8 • 100% Open Source",
-    heroTitle: "Local SMB Network File Sharing <span>in 1 Click</span>",
-    heroSubtitle: "Zero manual friction. Automated Windows Firewall rules, NTFS ACL inheritance, and real-time LAN diagnostics.",
+    badge: "Windows 10 & 11 • .NET 8 • 100% Open Source.",
+    heroTitle: "Local SMB network file sharing in 1 click.",
+    heroSubtitle: "Zero manual friction. Automated Windows Firewall rules, NTFS ACL inheritance, and real-time LAN diagnostics without touching security settings.",
     copyText: "Copy",
     copiedText: "Copied! ✓",
     btnDownload: "Download Release (.zip)",
-    btnGithub: "View on GitHub",
+    btnGithub: "View on GitHub ↗",
     navFeatures: "Features",
     navCompare: "Compare",
     navCli: "CLI",
-    navSecurity: "Security",
     navFaq: "FAQ",
-    secCompareTitle: "Manual Windows Setup vs LAN Share Manager",
+    secShowcaseTitle: "Graphical and Command-line environment.",
+    secCompareTitle: "Manual Windows setup vs LAN Share Manager.",
     secCompareSubtitle: "Why standard Windows file sharing is painful and how we solve it in 3 seconds.",
-    secFeaturesTitle: "Key Capabilities & Architecture",
-    secTerminalTitle: "Interactive CLI Terminal",
-    secSecurityTitle: "Axiom / MAS-grade Security Architecture",
-    secFaqTitle: "Frequently Asked Questions"
+    secFeaturesTitle: "Key capabilities and architecture.",
+    secTerminalTitle: "Interactive CLI Terminal.",
+    secSecurityTitle: "Axiom / MAS-grade security architecture.",
+    secFaqTitle: "Frequently asked questions."
   }
 };
 
@@ -79,9 +79,9 @@ function setLanguage(lang) {
   });
 }
 
-// Clipboard Copy
+// Clipboard Copy for Stadium Pills
 function setupCopyButtons() {
-  document.querySelectorAll('.copy-btn').forEach(btn => {
+  document.querySelectorAll('.copy-pill-btn, .copy-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       const targetId = btn.dataset.copyTarget;
       const target = document.getElementById(targetId);
@@ -89,33 +89,33 @@ function setupCopyButtons() {
 
       const text = target.innerText.trim();
       navigator.clipboard.writeText(text).then(() => {
-        const originalText = btn.innerHTML;
+        const originalHtml = btn.innerHTML;
         btn.classList.add('copied');
-        btn.innerHTML = `<span>✓</span> ${translations[currentLang].copiedText}`;
+        btn.innerHTML = `<span style="color:#fff;">✓</span> ${translations[currentLang].copiedText}`;
         setTimeout(() => {
           btn.classList.remove('copied');
-          btn.innerHTML = originalText;
+          btn.innerHTML = originalHtml;
         }, 2000);
       });
     });
   });
 }
 
-// App Window Mockup Tab Switching
+// App Window Mockup Tab Switching (Segmented Control)
 function setupShowcaseTabs() {
-  const tabBtns = document.querySelectorAll('.tab-btn');
-  const tabContents = document.querySelectorAll('.tab-content');
+  const tabBtns = document.querySelectorAll('.segmented-item[data-tab]');
+  const tabPanes = document.querySelectorAll('.tab-pane');
 
   tabBtns.forEach(btn => {
     btn.addEventListener('click', () => {
       const targetTab = btn.dataset.tab;
 
       tabBtns.forEach(b => b.classList.remove('active'));
-      tabContents.forEach(c => c.classList.remove('active'));
+      tabPanes.forEach(p => p.style.display = 'none');
 
       btn.classList.add('active');
       const activeContent = document.getElementById(`tab-${targetTab}`);
-      if (activeContent) activeContent.classList.add('active');
+      if (activeContent) activeContent.style.display = 'block';
     });
   });
 }
@@ -197,8 +197,9 @@ function formatAnsi(text) {
 }
 
 function setupCliSimulator() {
-  const cliBtns = document.querySelectorAll('.cli-btn');
-  const terminalBody = document.getElementById('cli-terminal-body');
+  const cliBtns = document.querySelectorAll('.cli-tab-btn');
+  const screen = document.getElementById('cli-screen-body');
+  if (!screen) return;
 
   cliBtns.forEach(btn => {
     btn.addEventListener('click', () => {
@@ -207,26 +208,25 @@ function setupCliSimulator() {
 
       const cmd = btn.dataset.cmd;
       if (cliOutputs[cmd]) {
-        terminalBody.innerHTML = formatAnsi(cliOutputs[cmd]);
+        screen.innerHTML = formatAnsi(cliOutputs[cmd]);
       }
     });
   });
 
-  // Load default
-  if (terminalBody) terminalBody.innerHTML = formatAnsi(cliOutputs.create);
+  // Default load
+  screen.innerHTML = formatAnsi(cliOutputs.create);
 }
 
-// FAQ Accordion
+// FAQ Accordion (.faq-row at rounded.sm)
 function setupFaq() {
-  document.querySelectorAll('.faq-question').forEach(q => {
-    q.addEventListener('click', () => {
-      const item = q.parentElement;
-      item.classList.toggle('active');
+  document.querySelectorAll('.faq-row').forEach(row => {
+    row.addEventListener('click', () => {
+      row.classList.toggle('active');
     });
   });
 }
 
-// Initialize on Load
+// Initialize on DOM Ready
 document.addEventListener('DOMContentLoaded', () => {
   setupCopyButtons();
   setupShowcaseTabs();

@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mobbin Design System — Reference Kit & UI Component Showcase.</title>
+  <meta name="description" content="Complete implementation of the Mobbin Design System specification: strictly monochrome palette, stadium-pill controls, 30% squircle icons, Saans/Inter variable weights (650/450/300), and all 10 ex-* demonstration surfaces.">
+
+  <!-- Google Fonts: Inter & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,300..700;1,14..32,300..700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Floating Nav Pill -->
+  <div class="nav-wrapper">
+    <nav class="nav-pill">
+      <a href="index.html" class="nav-brand">
+        <div class="brand-squircle">M</div>
+        <span class="nav-brand-title">Mobbin Design System</span>
+      </a>
+
+      <ul class="nav-links">
+        <li><a href="#colors" class="nav-link">Colors</a></li>
+        <li><a href="#typography" class="nav-link">Typography</a></li>
+        <li><a href="#buttons" class="nav-link">Buttons</a></li>
+        <li><a href="#components" class="nav-link">Components</a></li>
+        <li><a href="#examples" class="nav-link">Kit Primitives (ex-*)</a></li>
+        <li><a href="#rules" class="nav-link">Do's & Don'ts</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <a href="index.html" class="button-pill-soft">← Back to App</a>
+        <a href="https://github.com/Azamaperdeev05/lan-share-manager" target="_blank" class="button-primary" style="height: 36px; padding: 0 16px; font-size: 13px;">
+          GitHub ↗
+        </a>
+      </div>
+    </nav>
+  </div>
+
+  <main class="container section-gap">
+    <!-- Header -->
+    <section style="text-align: center; margin-bottom: var(--space-section);">
+      <div class="hero-badge-pill">
+        <span class="badge-popular" style="margin-right: 4px;">Specification</span>
+        <span>Version 1.0 • Strictly Monochrome + Single Electric Blue Accent.</span>
+      </div>
+
+      <h1 class="type-display" style="margin-bottom: var(--space-md);">
+        Mobbin Design System.
+      </h1>
+
+      <p class="type-body-lg" style="max-width: 760px; margin: 0 auto;">
+        An engineered reference library of real product interfaces. Strictly monochrome near-black ink (<code>#141414</code>) on pure white canvas (<code>#ffffff</code>), structured by a ladder of neutral tints, stadium pills (<code>rounded.full</code>), and variable weights.
+      </p>
+    </section>
+
+    <!-- 1. COLORS LADDER -->
+    <section id="colors" class="section-gap" style="border-top: 1px solid var(--colors-hairline-soft);">
+      <h2 class="type-heading-2" style="margin-bottom: var(--space-xs);">1. Colors & Neutral Tint Ladder.</h2>
+      <p class="type-body" style="color: var(--colors-text-muted); margin-bottom: var(--space-xl);">
+        Shadow-free elevation carried by fill differences and 1px hairlines. Electric Blue is reserved exclusively for commercial decisions.
+      </p>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--space-md);">
+        <!-- Ink Black -->
+        <div class="card-flat">
+          <div style="height: 80px; background-color: var(--colors-ink); border-radius: var(--rounded-sm); margin-bottom: 12px;"></div>
+          <div class="type-title" style="font-size: 16px;">Ink Black</div>
+          <div class="type-caption"><code>--colors-ink: #141414</code></div>
+          <p class="type-body-sm" style="margin-top: 4px;">Primary CTA pills, display headings, polarity-inverted footer.</p>
+        </div>
+
+        <!-- Electric Blue -->
+        <div class="card-flat">
+          <div style="height: 80px; background-color: var(--colors-accent); border-radius: var(--rounded-sm); margin-bottom: 12px;"></div>
+          <div class="type-title" style="font-size: 16px;">Electric Blue</div>
+          <div class="type-caption"><code>--colors-accent: #0066ff</code></div>
+          <p class="type-body-sm" style="margin-top: 4px;">The ONLY chromatic accent. Reserved for "Popular" badges & savings.</p>
+        </div>
+
+        <!-- Canvas -->
+        <div class="card-flat">
+          <div style="height: 80px; background-color: var(--colors-canvas); border: 1px solid var(--colors-hairline); border-radius: var(--rounded-sm); margin-bottom: 12px;"></div>
+          <div class="type-title" style="font-size: 16px;">Canvas</div>
+          <div class="type-caption"><code>--colors-canvas: #ffffff</code></div>
+          <p class="type-body-sm" style="margin-top: 4px;">Default page background, standard cards, and active toggle pills.</p>
+        </div>
+
+        <!-- Soft Canvas -->
+        <div class="card-flat">
+          <div style="height: 80px; background-color: var(--colors-canvas-soft); border-radius: var(--rounded-sm); margin-bottom: 12px;"></div>
+          <div class="type-title" style="font-size: 16px;">Soft Canvas (6%)</div>
+          <div class="type-caption"><code>--colors-canvas-soft: #f3f3f3</code></div>
+          <p class="type-body-sm" style="margin-top: 4px;">Workhorse tint: floating nav-pill, featured cards, FAQ rows.</p>
+        </div>
+
+        <!-- Field -->
+        <div class="card-flat">
+          <div style="height: 80px; background-color: var(--colors-field); border-radius: var(--rounded-sm); margin-bottom: 12px;"></div>
+          <div class="type-title" style="font-size: 16px;">Field (8%)</div>
+          <div class="type-caption"><code>--colors-field: #f0f0f0</code></div>
+          <p class="type-body-sm" style="margin-top: 4px;">Fill for form inputs, borderless at rest with 2px ink focus ring.</p>
+        </div>
+
+        <!-- Hairline -->
+        <div class="card-flat">
+          <div style="height: 80px; background-color: var(--colors-hairline); border-radius: var(--rounded-sm); margin-bottom: 12px;"></div>
+          <div class="type-title" style="font-size: 16px;">Hairline (16%)</div>
+          <div class="type-caption"><code>--colors-hairline: #e0e0e0</code></div>
+          <p class="type-body-sm" style="margin-top: 4px;">1px control border for outlined buttons and resting cards.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. TYPOGRAPHY SCALE -->
+    <section id="typography" class="section-gap" style="border-top: 1px solid var(--colors-hairline-soft);">
+      <h2 class="type-heading-2" style="margin-bottom: var(--space-xs);">2. Typography & Variable Weights.</h2>
+      <p class="type-body" style="color: var(--colors-text-muted); margin-bottom: var(--space-xl);">
+        Set in Inter / Saans with signature variable weights: 650 for chunky headings with 1.0–1.13 line-height, 450 for running text, and airy 300 for lead subtitles. Zero letter-spacing everywhere.
+      </p>
+
+      <div style="border: 1px solid var(--colors-hairline-soft); border-radius: var(--rounded-md); overflow: hidden;">
+        <table class="ex-table">
+          <thead>
+            <tr>
+              <th>Role</th>
+              <th>Size</th>
+              <th>Weight</th>
+              <th>Leading</th>
+              <th>Live Preview</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>type-display</code></td>
+              <td>80px</td>
+              <td>650</td>
+              <td>1.0</td>
+              <td><span class="type-display" style="font-size: 36px;">Headline statement.</span></td>
+            </tr>
+            <tr>
+              <td><code>type-heading-1</code></td>
+              <td>56px</td>
+              <td>650</td>
+              <td>1.0</td>
+              <td><span class="type-heading-1" style="font-size: 28px;">Design like a Pro.</span></td>
+            </tr>
+            <tr>
+              <td><code>type-heading-2</code></td>
+              <td>44px</td>
+              <td>650</td>
+              <td>1.13</td>
+              <td><span class="type-heading-2" style="font-size: 24px;">The votes are in.</span></td>
+            </tr>
+            <tr>
+              <td><code>type-heading-3</code></td>
+              <td>32px</td>
+              <td>650</td>
+              <td>1.13</td>
+              <td><span class="type-heading-3" style="font-size: 20px;">Card-level headline.</span></td>
+            </tr>
+            <tr>
+              <td><code>type-heading-4</code></td>
+              <td>24px</td>
+              <td>650</td>
+              <td>1.25</td>
+              <td><span class="type-heading-4" style="font-size: 18px;">Sub-section plan name.</span></td>
+            </tr>
+            <tr>
+              <td><code>type-body-lg</code></td>
+              <td>20px</td>
+              <td>300</td>
+              <td>1.38</td>
+              <td><span class="type-body-lg">Hero subtitles and airy lead paragraphs.</span></td>
+            </tr>
+            <tr>
+              <td><code>type-body</code></td>
+              <td>16px</td>
+              <td>450</td>
+              <td>1.38</td>
+              <td><span class="type-body">Default body copy and testimonial quote text.</span></td>
+            </tr>
+            <tr>
+              <td><code>type-body-sm</code></td>
+              <td>14px</td>
+              <td>450</td>
+              <td>1.43</td>
+              <td><span class="type-body-sm">Supporting copy, plan feature lists, fine print.</span></td>
+            </tr>
+            <tr>
+              <td><code>type-label</code></td>
+              <td>12px</td>
+              <td>600</td>
+              <td>1.33</td>
+              <td><span class="type-label">Badge and pill labels.</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 3. BUTTONS & CONTROLS -->
+    <section id="buttons" class="section-gap" style="border-top: 1px solid var(--colors-hairline-soft);">
+      <h2 class="type-heading-2" style="margin-bottom: var(--space-xs);">3. Stadium-Pill Interaction Language ({rounded.full}).</h2>
+      <p class="type-body" style="color: var(--colors-text-muted); margin-bottom: var(--space-xl);">
+        Every button, toggle, and interactive element is a stadium shape. A rectangular button does not exist in this system.
+      </p>
+
+      <div style="display: flex; gap: var(--space-lg); flex-wrap: wrap; align-items: center; margin-bottom: var(--space-xl);">
+        <div>
+          <button class="button-primary">button-primary</button>
+          <div class="type-caption" style="margin-top: 8px;">Fill #141414, on-primary text</div>
+        </div>
+
+        <div>
+          <button class="button-outline">button-outline</button>
+          <div class="type-caption" style="margin-top: 8px;">Fill #fff, 1px #e0e0e0 hairline</div>
+        </div>
+
+        <div>
+          <button class="button-pill-soft">button-pill-soft ↗</button>
+          <div class="type-caption" style="margin-top: 8px;">Fill #f3f3f3, no border</div>
+        </div>
+
+        <div>
+          <span class="badge-popular">badge-popular</span>
+          <div class="type-caption" style="margin-top: 8px;">#0066ff Electric Blue</div>
+        </div>
+
+        <div>
+          <span class="badge-overlay">badge-overlay</span>
+          <div class="type-caption" style="margin-top: 8px;">Translucent Scrim</div>
+        </div>
+      </div>
+
+      <!-- Segmented Control Demo -->
+      <div style="background-color: var(--colors-canvas-soft); padding: var(--space-lg); border-radius: var(--rounded-md); display: flex; align-items: center; justify-content: space-between; flex-wrap: gap: 16px;">
+        <div>
+          <h4 class="type-heading-4">segmented-control</h4>
+          <p class="type-body-sm">Billing cycle toggle. Active option lifts off the #f3f3f3 track as a #ffffff white pill with subtle soft shadow.</p>
+        </div>
+        <div class="segmented-control">
+          <button class="segmented-item active">Billed yearly (Save 20%)</button>
+          <button class="segmented-item">Billed monthly</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. SIGNATURE COMPONENTS -->
+    <section id="components" class="section-gap" style="border-top: 1px solid var(--colors-hairline-soft);">
+      <h2 class="type-heading-2" style="margin-bottom: var(--space-xs);">4. Signature Components.</h2>
+      <p class="type-body" style="color: var(--colors-text-muted); margin-bottom: var(--space-xl);">
+        iOS-style 30% squircle icons, brand marquee chips, and form input primitives.
+      </p>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: var(--space-lg);">
+        <!-- App Icon Squircles -->
+        <div class="card-flat">
+          <h4 class="type-heading-4" style="margin-bottom: 8px;">app-icon-squircle</h4>
+          <p class="type-body-sm" style="margin-bottom: 16px;">30% corner radius, rendering clean product and system icons.</p>
+          <div style="display: flex; gap: 12px; align-items: center;">
+            <div class="app-icon-squircle" style="width: 48px; height: 48px; font-size: 20px;">📱</div>
+            <div class="app-icon-squircle" style="width: 64px; height: 64px; font-size: 26px;">📁</div>
+            <div class="app-icon-squircle" style="width: 80px; height: 80px; font-size: 32px; background-color: var(--colors-ink); color: #fff;">⚡</div>
+          </div>
+        </div>
+
+        <!-- Form Input -->
+        <div class="card-flat">
+          <h4 class="type-heading-4" style="margin-bottom: 8px;">text-input & focus</h4>
+          <p class="type-body-sm" style="margin-bottom: 16px;">Field tint fill (#f0f0f0), borderless at rest, 2px ink focus ring.</p>
+          <div style="display: flex; flex-direction: column; gap: 10px;">
+            <input type="text" class="text-input" placeholder="Enter your work email...">
+            <input type="text" class="text-input" value="Active input focus ring demo">
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. KIT-MIRROR DEMONSTRATION SURFACES (ALL 10 EX-* SURFACES) -->
+    <section id="examples" class="section-gap" style="border-top: 1px solid var(--colors-hairline-soft);">
+      <h2 class="type-heading-2" style="margin-bottom: var(--space-xs);">5. Kit-Mirror Demonstration Surfaces (ex-*).</h2>
+      <p class="type-body" style="color: var(--colors-text-muted); margin-bottom: var(--space-xl);">
+        Every single <code>ex-*</code> primitive specified in the Mobbin Kit Mirror specification implemented with exact token properties.
+      </p>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: var(--space-xl);">
+
+        <!-- 1. ex-pricing-tier -->
+        <div class="ex-pricing-tier">
+          <div class="type-caption">EX-PRICING-TIER</div>
+          <h3 class="type-heading-4">Team Plan</h3>
+          <div style="font-size: 36px; font-weight: 650; line-height: 1.0;">$15 <span class="type-caption">/ seat / mo</span></div>
+          <p class="type-body-sm">For small product teams organizing screenshots and building design libraries.</p>
+          <ul class="type-body-sm" style="list-style: none; display: flex; flex-direction: column; gap: 8px; margin: 12px 0;">
+            <li>✓ Unlimited flows & screens</li>
+            <li>✓ Export to Figma in 1 click</li>
+            <li>✓ 5 team workspaces</li>
+          </ul>
+          <button class="button-outline" style="width: 100%;">Get started</button>
+        </div>
+
+        <!-- 2. ex-pricing-tier-featured -->
+        <div class="ex-pricing-tier-featured">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div class="type-caption">EX-PRICING-TIER-FEATURED</div>
+            <span class="badge-popular">Popular</span>
+          </div>
+          <h3 class="type-heading-4">Pro Plan</h3>
+          <div style="font-size: 36px; font-weight: 650; line-height: 1.0;">$8 <span class="type-caption">/ mo (billed yearly)</span></div>
+          <p class="type-body-sm">For individual designers and researchers who need uninterrupted access.</p>
+          <ul class="type-body-sm" style="list-style: none; display: flex; flex-direction: column; gap: 8px; margin: 12px 0;">
+            <li>✓ All 350,000+ iOS, Android & Web screens</li>
+            <li>✓ Advanced search by pattern & UI element</li>
+            <li>✓ Zero watermarks, full-res downloads</li>
+          </ul>
+          <button class="button-primary" style="width: 100%;">Start 7-day trial</button>
+        </div>
+
+        <!-- 3. ex-product-selector -->
+        <div class="ex-product-selector">
+          <div class="type-caption" style="margin-bottom: 8px;">EX-PRODUCT-SELECTOR</div>
+          <h4 class="type-title" style="margin-bottom: 6px;">What's Included</h4>
+          <p class="type-body-sm" style="margin-bottom: 16px;">SaaS subscription features summary card.</p>
+          <div style="display: flex; flex-direction: column; gap: 10px;">
+            <div style="display: flex; align-items: center; justify-content: space-between; background: #fff; padding: 10px 14px; border-radius: var(--rounded-sm);">
+              <span class="type-body" style="font-weight: 600;">Core Platform API</span>
+              <span class="badge-soft">Active</span>
+            </div>
+            <div style="display: flex; align-items: center; justify-content: space-between; background: #fff; padding: 10px 14px; border-radius: var(--rounded-sm);">
+              <span class="type-body" style="font-weight: 600;">Enterprise SSO (SAML)</span>
+              <span class="badge-soft">Add-on</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. ex-cart-drawer -->
+        <div class="ex-cart-drawer">
+          <div class="type-caption" style="margin-bottom: 8px;">EX-CART-DRAWER</div>
+          <h4 class="type-title" style="margin-bottom: 12px;">Subscription Summary</h4>
+          <div class="ex-cart-item">
+            <span class="type-body-sm">Pro Membership (Annual)</span>
+            <strong>$96.00</strong>
+          </div>
+          <div class="ex-cart-item">
+            <span class="type-body-sm">Figma Plugin License</span>
+            <strong>$24.00</strong>
+          </div>
+          <div style="display: flex; justify-content: space-between; padding-top: 14px; margin-top: 8px;">
+            <span class="type-title">Total Due</span>
+            <span class="type-title">$120.00</span>
+          </div>
+          <button class="button-primary" style="width: 100%; margin-top: 16px;">Complete Checkout</button>
+        </div>
+
+        <!-- 5. ex-app-shell-row -->
+        <div class="card-flat">
+          <div class="type-caption" style="margin-bottom: 8px;">EX-APP-SHELL-ROW</div>
+          <h4 class="type-title" style="margin-bottom: 12px;">Sidebar Navigation</h4>
+          <div style="display: flex; flex-direction: column; gap: 4px;">
+            <div class="ex-app-shell-row active">
+              <span>Overview</span>
+            </div>
+            <div class="ex-app-shell-row">
+              <span>Shared Folders</span>
+            </div>
+            <div class="ex-app-shell-row">
+              <span>Diagnostics Log</span>
+            </div>
+            <div class="ex-app-shell-row">
+              <span>Security Settings</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 6. ex-auth-form-card -->
+        <div class="ex-auth-form-card">
+          <div class="type-caption" style="margin-bottom: 8px;">EX-AUTH-FORM-CARD</div>
+          <h4 class="type-heading-3" style="font-size: 24px; margin-bottom: 4px;">Sign in.</h4>
+          <p class="type-body-sm" style="margin-bottom: 16px;">Access your design inspiration library.</p>
+          <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px;">
+            <input type="email" class="text-input" placeholder="Work email address">
+            <input type="password" class="text-input" placeholder="Password">
+          </div>
+          <button class="button-primary" style="width: 100%; margin-bottom: 8px;">Continue</button>
+          <button class="button-outline" style="width: 100%;">Continue with Google</button>
+        </div>
+
+        <!-- 7. ex-modal-card -->
+        <div class="card-flat" style="border: 2px solid var(--colors-hairline);">
+          <div class="type-caption" style="margin-bottom: 8px;">EX-MODAL-CARD</div>
+          <h4 class="type-heading-4" style="margin-bottom: 6px;">Delete Shared Folder?</h4>
+          <p class="type-body-sm" style="margin-bottom: 20px;">
+            This will only remove the network SMB registration. Your local files on disk will never be deleted.
+          </p>
+          <div style="display: flex; justify-content: flex-end; gap: 8px;">
+            <button class="button-outline">Cancel</button>
+            <button class="button-primary">Confirm Removal</button>
+          </div>
+        </div>
+
+        <!-- 8. ex-empty-state-card -->
+        <div class="ex-empty-state-card">
+          <div class="type-caption" style="margin-bottom: 8px;">EX-EMPTY-STATE-CARD</div>
+          <div class="app-icon-squircle" style="width: 56px; height: 56px; margin: 0 auto 12px auto; font-size: 24px;">📁</div>
+          <h4 class="type-heading-4" style="margin-bottom: 6px;">No shared folders yet.</h4>
+          <p class="type-body-sm" style="margin-bottom: 16px;">Create your first local SMB share in 1 click.</p>
+          <button class="button-primary">+ Create Share</button>
+        </div>
+
+        <!-- 9. ex-toast -->
+        <div class="card-flat" style="display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
+          <div class="type-caption" style="margin-bottom: 16px;">EX-TOAST</div>
+          <div class="ex-toast">
+            <span style="color: #10B981;">✓</span> Share \\DESKTOP-PC\OBSHAYA copied to clipboard.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6. DO'S AND DON'TS -->
+    <section id="rules" class="section-gap" style="border-top: 1px solid var(--colors-hairline-soft);">
+      <h2 class="type-heading-2" style="margin-bottom: var(--space-xs);">6. Design System Principles (Do's & Don'ts).</h2>
+      <p class="type-body" style="color: var(--colors-text-muted); margin-bottom: var(--space-xl);">
+        Core design governance rules directly from the Mobbin design lead specification.
+      </p>
+
+      <div class="comparison-grid">
+        <div class="compare-card-good">
+          <h3 class="type-heading-4" style="margin-bottom: 16px;">✓ DO</h3>
+          <ul class="compare-list">
+            <li class="compare-item"><strong>Gallery-white canvas:</strong> Keep #ffffff canvas and let imported content supply all saturation.</li>
+            <li class="compare-item"><strong>Stadium pills:</strong> Use <code>rounded.full</code> for every button, nav pill, badge, and toggle.</li>
+            <li class="compare-item"><strong>Variable weights:</strong> Set 650 for chunky headings with 1.0–1.13 leading and terminal periods.</li>
+            <li class="compare-item"><strong>Scarcity of blue:</strong> Reserve #0066ff strictly for commercial decisions (Popular badge & savings).</li>
+            <li class="compare-item"><strong>iOS Squircles:</strong> Render icons with 30% corner radius.</li>
+            <li class="compare-item"><strong>Polarity Inversion:</strong> Close pages with the near-black #141414 footer rounded at 24px top.</li>
+          </ul>
+        </div>
+
+        <div class="compare-card-bad">
+          <h3 class="type-heading-4" style="margin-bottom: 16px;">✕ DON'T</h3>
+          <ul class="compare-list">
+            <li class="compare-item"><strong>No drop shadows:</strong> Elevation is built solely by tint fills and 1px hairlines.</li>
+            <li class="compare-item"><strong>No blue CTAs:</strong> Primary actions are always ink black #141414 pills, never electric blue.</li>
+            <li class="compare-item"><strong>No rectangular buttons:</strong> Square-cornered buttons do not exist in Mobbin.</li>
+            <li class="compare-item"><strong>No borders on resting fields:</strong> Form inputs are #f0f0f0 fills; 2px ink ring only on focus.</li>
+            <li class="compare-item"><strong>No letter-spacing:</strong> Let typography run naturally at 0 letter-spacing.</li>
+            <li class="compare-item"><strong>No extra colors:</strong> Do not introduce random green, purple, or decorative gradients.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Full-bleed Near-Black Footer with 24px Rounded Top Corners -->
+  <footer class="footer-band">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <div class="footer-wordmark">Mobbin Design System.</div>
+          <p class="footer-tagline">
+            Reference implementation of Mobbin's gallery-white monochrome design tokens, stadium pills, and variable typography.
+          </p>
+        </div>
+
+        <div>
+          <div class="footer-col-title">Navigation</div>
+          <ul class="footer-links">
+            <li><a href="index.html">LAN Share Manager Landing Page</a></li>
+            <li><a href="#colors">Colors & Tint Ladder</a></li>
+            <li><a href="#typography">Typography Hierarchy</a></li>
+            <li><a href="#examples">Kit Primitives (ex-*)</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <div class="footer-col-title">Source</div>
+          <ul class="footer-links">
+            <li><a href="https://github.com/Azamaperdeev05/lan-share-manager" target="_blank">GitHub Repository ↗</a></li>
+            <li><a href="https://github.com/Azamaperdeev05/lan-share-manager/releases" target="_blank">Releases v1.0.0</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div>MIT License • Antigravity Pair Programming</div>
+        <div>Crafted to exact Mobbin design specifications.</div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

@@ -3,263 +3,302 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>LAN Share Manager — Жергілікті желіде SMB папкаларын 1 кликпен ортақ ету (Windows 10/11)</title>
-  <meta name="description" content="Windows 10 және 11 үшін SMB желілік ортақ папкаларын автоматты баптайтын заманауи утилита. NTFS рұқсаттары, Брандмауэр ережелері (TCP 445) және 10-деңгейлі авто-диагностика.">
-  <meta name="keywords" content="LAN Share Manager, SMB, Windows 10, Windows 11, файлдық ортақ қатынас, желілік папка, PowerShell, NTFS permissions, firewall">
+  <title>LAN Share Manager — Windows 10/11 үшін 1 кликпен SMB папкаларын ортақ ету.</title>
+  <meta name="description" content="Mobbin дизайнымен жасалған Windows 10/11 желілік папкалар менеджері. Автоматты NTFS рұқсаттары, Брандмауэр ережелері және 10-деңгейлі жүйелік диагностика.">
   
   <!-- Open Graph -->
-  <meta property="og:title" content="LAN Share Manager — SMB желілік папкаларын 1 кликпен баптау">
-  <meta property="og:description" content="Автоматты NTFS рұқсаттары, Windows Firewall (TCP 445) және 10-деңгейлі авто-диагностика. Бір командамен іске қосу: irm azamaperdeev05.github.io/lsm | iex">
+  <meta property="og:title" content="LAN Share Manager — SMB желілік ортақ қатынасын 1 кликпен баптау.">
+  <meta property="og:description" content="Автоматты NTFS, Windows Firewall (TCP 445) және 10-деңгейлі авто-диагностика.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://azamaperdeev05.github.io/lan-share-manager/">
 
-  <!-- Google Fonts -->
+  <!-- Google Fonts: Inter (300, 450, 650, 700) & JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,300..700;1,14..32,300..700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-  <!-- Glow Backgrounds -->
-  <div class="bg-glow-1"></div>
-  <div class="bg-glow-2"></div>
-  <div class="bg-glow-3"></div>
-
-  <!-- Navigation Bar -->
-  <header class="navbar">
-    <div class="container navbar">
+  <!-- Floating Nav Pill (Stadium shape, detached from viewport edge) -->
+  <div class="nav-wrapper">
+    <nav class="nav-pill">
       <a href="#" class="nav-brand">
-        <div class="nav-logo">📁</div>
-        <div class="nav-title">LAN Share Manager</div>
+        <div class="brand-squircle">📁</div>
+        <span class="nav-brand-title">LAN Share Manager</span>
       </a>
 
       <ul class="nav-links">
-        <li><a href="#features" data-i18n="navFeatures">Мүмкіндіктер</a></li>
-        <li><a href="#compare" data-i18n="navCompare">Салыстыру</a></li>
-        <li><a href="#showcase">Демо</a></li>
-        <li><a href="#cli" data-i18n="navCli">CLI Консоль</a></li>
-        <li><a href="#security" data-i18n="navSecurity">Қауіпсіздік</a></li>
-        <li><a href="#faq" data-i18n="navFaq">Сұрақ-жауап</a></li>
+        <li><a href="#features" class="nav-link" data-i18n="navFeatures">Мүмкіндіктер</a></li>
+        <li><a href="#compare" class="nav-link" data-i18n="navCompare">Салыстыру</a></li>
+        <li><a href="#showcase" class="nav-link">Интерфейс</a></li>
+        <li><a href="#cli" class="nav-link" data-i18n="navCli">CLI</a></li>
+        <li><a href="#faq" class="nav-link" data-i18n="navFaq">Сұрақ-жауап</a></li>
+        <li><a href="components.html" class="nav-link" style="color: var(--colors-ink);">Design System ↗</a></li>
       </ul>
 
       <div class="nav-actions">
-        <!-- Language Switcher -->
-        <div class="lang-switch">
+        <!-- Language Switcher Stadium Control -->
+        <div class="lang-selector">
           <button class="lang-btn active" data-lang="kz">KZ</button>
           <button class="lang-btn" data-lang="ru">RU</button>
           <button class="lang-btn" data-lang="en">EN</button>
         </div>
 
-        <a href="https://github.com/Azamaperdeev05/lan-share-manager" target="_blank" class="btn btn-secondary btn-sm">
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+        <a href="https://github.com/Azamaperdeev05/lan-share-manager" target="_blank" class="button-primary" style="height: 36px; padding: 0 16px; font-size: 13px;">
           GitHub
         </a>
       </div>
-    </div>
-  </header>
+    </nav>
+  </div>
 
-  <!-- Hero Section -->
   <main>
-    <section class="hero">
-      <div class="container">
-        <div class="badge-pill">
-          <span class="badge-dot"></span>
-          <span data-i18n="badge">Windows 10 & 11 • .NET 8 • Ашық бастапқы код</span>
+    <!-- Hero Section (Strictly Monochrome + Terminal Period on Headlines) -->
+    <section class="hero container">
+      <div class="hero-badge-pill">
+        <span class="app-icon-squircle" style="width: 18px; height: 18px; background: var(--colors-ink); color: #fff; font-size: 11px;">✓</span>
+        <span data-i18n="badge">Windows 10 & 11 • .NET 8 • 100% Open Source.</span>
+      </div>
+
+      <h1 class="type-display hero-title" data-i18n="heroTitle">
+        Жергілікті желідегі папкаларды 1 кликпен ортақ етіңіз.
+      </h1>
+
+      <p class="type-body-lg hero-subtitle" data-i18n="heroSubtitle">
+        Ешқандай күрделі қолмен баптауларсыз. Брандмауэрді, NTFS қауіпсіздік ережелерін және желілік мекенжайларды автоматты синхрондайтын заманауи Windows утилитасы.
+      </p>
+
+      <!-- Quick 1-Line Terminal Launcher Pill -->
+      <div class="terminal-launcher-pill">
+        <div class="terminal-pill-code">
+          <span class="prompt">PS &gt;</span>
+          <span id="one-liner-code">irm azamaperdeev05.github.io/lsm | iex</span>
         </div>
+        <button class="copy-pill-btn" data-copy-target="one-liner-code">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+          <span data-i18n="copyText">Көшіру</span>
+        </button>
+      </div>
 
-        <h1 class="hero-title" data-i18n="heroTitle">
-          Жергілікті желіде папкаларды <span>1 кликпен</span> ортақ ету
-        </h1>
+      <!-- Action Buttons (Stadium Pills) -->
+      <div class="hero-cta-group">
+        <a href="https://github.com/Azamaperdeev05/lan-share-manager/releases/latest" class="button-primary">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+          <span data-i18n="btnDownload">ZIP репозиторийден жүктеу</span>
+        </a>
+        <a href="https://github.com/Azamaperdeev05/lan-share-manager" target="_blank" class="button-outline">
+          <span data-i18n="btnGithub">GitHub репозиторийі ↗</span>
+        </a>
+      </div>
+    </section>
 
-        <p class="hero-subtitle" data-i18n="heroSubtitle">
-          Ешқандай күрделі баптауларсыз. Брандмауэрді, NTFS рұқсаттарын және желілік мекенжайларды автоматты реттейтін ақылды Windows утилитасы.
+    <!-- Brand Marquee Strip (iOS Squircles + Familiar Tech) -->
+    <div class="container">
+      <div class="brand-marquee-strip">
+        <div class="brand-chip"><span class="app-icon-squircle" style="width: 24px; height: 24px;">🪟</span> Windows 11 Fluent</div>
+        <div class="brand-chip"><span class="app-icon-squircle" style="width: 24px; height: 24px;">⚙️</span> .NET 8 LTS</div>
+        <div class="brand-chip"><span class="app-icon-squircle" style="width: 24px; height: 24px;">🔒</span> NTFS Security ACL</div>
+        <div class="brand-chip"><span class="app-icon-squircle" style="width: 24px; height: 24px;">🛡</span> Windows Firewall 445</div>
+        <div class="brand-chip"><span class="app-icon-squircle" style="width: 24px; height: 24px;">⚡</span> PowerShell Full Language</div>
+        <div class="brand-chip"><span class="app-icon-squircle" style="width: 24px; height: 24px;">📁</span> SMB Protocol</div>
+      </div>
+    </div>
+
+    <!-- Interactive App Showcase Frame -->
+    <section class="container section-gap" id="showcase">
+      <div style="text-align: center; margin-bottom: var(--space-xl);">
+        <h2 class="type-heading-2" data-i18n="secShowcaseTitle">Графикалық және Консольдік орта.</h2>
+        <p class="type-body" style="color: var(--colors-text-muted); margin-top: var(--space-xs);">
+          WPF Windows 11 интерфейсі және автоматтандыруға арналған CLI бірыңғай жүйеде.
         </p>
 
-        <!-- Quick 1-Line Terminal Card -->
-        <div class="quick-terminal">
-          <div class="terminal-command">
-            <span class="terminal-prompt">PS &gt;</span>
-            <span id="one-liner-code">irm azamaperdeev05.github.io/lsm | iex</span>
-          </div>
-          <button class="copy-btn" data-copy-target="one-liner-code">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-            <span data-i18n="copyText">Көшіру</span>
-          </button>
+        <!-- Segmented Control for Showcase Tabs -->
+        <div class="segmented-control" style="margin-top: var(--space-lg);">
+          <button class="segmented-item active" data-tab="main">1. Басты терезе</button>
+          <button class="segmented-item" data-tab="create">2. Ресурс жасау</button>
+          <button class="segmented-item" data-tab="result">3. Нәтиже мен Путьтар</button>
+          <button class="segmented-item" data-tab="diag">4. 10-деңгейлі Диагностика</button>
         </div>
+      </div>
 
-        <!-- Call to Actions -->
-        <div class="hero-actions">
-          <a href="https://github.com/Azamaperdeev05/lan-share-manager/releases/latest" class="btn btn-primary">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-            <span data-i18n="btnDownload">ZIP репозиторийден жүктеу</span>
-          </a>
-          <a href="https://github.com/Azamaperdeev05/lan-share-manager" target="_blank" class="btn btn-secondary">
-            <span data-i18n="btnGithub">GitHub репозиторийі</span>
-          </a>
-        </div>
-
-        <!-- Interactive Windows 11 App Showcase Mockup -->
-        <div class="showcase-wrapper" id="showcase">
-          <div class="showcase-tabs">
-            <button class="tab-btn active" data-tab="main">1. Басты терезе (Главное окно)</button>
-            <button class="tab-btn" data-tab="create">2. Жасау сұхбаты (Создать ресурс)</button>
-            <button class="tab-btn" data-tab="result">3. Нәтиже мен Путьтар (Результат)</button>
-            <button class="tab-btn" data-tab="diag">4. 10-деңгейлі Диагностика</button>
+      <!-- App Showcase Surface Frame -->
+      <div class="showcase-frame">
+        <div class="mockup-inner-window">
+          <div class="mockup-titlebar">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span class="brand-squircle" style="width: 20px; height: 20px; font-size: 11px;">📁</span>
+              <span>LAN Share Manager — Windows SMB Sharing</span>
+            </div>
+            <div style="display: flex; gap: 6px;">
+              <span style="width: 10px; height: 10px; border-radius: 50%; background: var(--colors-hairline);"></span>
+              <span style="width: 10px; height: 10px; border-radius: 50%; background: var(--colors-hairline);"></span>
+              <span style="width: 10px; height: 10px; border-radius: 50%; background: var(--colors-hairline);"></span>
+            </div>
           </div>
 
-          <div class="app-window">
-            <div class="window-titlebar">
-              <div class="window-title">
-                <span>📁</span> LAN Share Manager — Управление общими папками SMB
+          <div class="mockup-body">
+            <!-- Tab 1: Main Window Mockup -->
+            <div class="tab-pane active" id="tab-main">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 12px;">
+                <div>
+                  <h3 class="type-heading-4">LAN Share Manager</h3>
+                  <p class="type-body-sm">Windows жергілікті желісінде ортақ папкаларды басқару орталығы.</p>
+                </div>
+                <div class="badge-soft" style="color: var(--colors-ink); font-weight: 650;">
+                  ✓ Режим администратора: Белсенді
+                </div>
               </div>
-              <div class="window-controls">
-                <div class="control-dot"></div>
-                <div class="control-dot"></div>
-                <div class="control-dot" style="background: #EF4444;"></div>
+
+              <!-- Network Status Bar (Neutral Tint Ladder) -->
+              <div style="background-color: var(--colors-canvas-soft); border-radius: var(--rounded-sm); padding: 16px 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 16px; margin-bottom: 20px;">
+                <div>
+                  <div class="type-caption">ПК АТАУЫ:</div>
+                  <div style="font-weight: 650; font-size: 14px; margin-top: 2px;">DESKTOP-MKVG1ET</div>
+                </div>
+                <div>
+                  <div class="type-caption">ЛОКАЛЬДЫ IPV4 (LAN):</div>
+                  <div style="font-weight: 650; font-size: 14px; color: var(--colors-ink); margin-top: 2px;">192.168.1.100</div>
+                </div>
+                <div>
+                  <div class="type-caption">ЖЕЛІ ПРОФИЛІ:</div>
+                  <div style="font-weight: 650; font-size: 14px; color: var(--colors-ink); margin-top: 2px;">Жеке (Private)</div>
+                </div>
+                <div>
+                  <div class="type-caption">SMB ПОРТЫ:</div>
+                  <div style="font-weight: 650; font-size: 14px; margin-top: 2px;">TCP 445 (Ашық)</div>
+                </div>
+              </div>
+
+              <!-- Active Shares Table -->
+              <div style="border: 1px solid var(--colors-hairline-soft); border-radius: var(--rounded-sm); overflow: hidden; margin-bottom: 20px;">
+                <table class="ex-table">
+                  <thead>
+                    <tr>
+                      <th>Ортақ атауы</th>
+                      <th>Дискідегі жол</th>
+                      <th>Рұқсат деңгейі</th>
+                      <th>Күйі</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td style="font-weight: 650;">OBSHAYA</td>
+                      <td style="color: var(--colors-text-muted);">C:\OBSHAYA</td>
+                      <td><span class="badge-soft">Оқу және жазу</span></td>
+                      <td style="font-weight: 650;">✓ Белсенді</td>
+                    </tr>
+                    <tr>
+                      <td style="font-weight: 650;">Documents</td>
+                      <td style="color: var(--colors-text-muted);">C:\Users\Admin\Documents</td>
+                      <td><span class="badge-soft">Тек оқу</span></td>
+                      <td style="font-weight: 650;">✓ Белсенді</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+                <div style="display: flex; gap: 8px;">
+                  <button class="button-pill-soft">Папканы ашу</button>
+                  <button class="button-pill-soft">Сілтемені көшіру</button>
+                  <button class="button-pill-soft">Диагностика</button>
+                </div>
+                <button class="button-primary">+ Жаңа ресурс қосу</button>
               </div>
             </div>
 
-            <div class="window-content">
-              <!-- Tab 1: Main Window Mockup -->
-              <div class="tab-content active" id="tab-main">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-                  <div>
-                    <h3 style="font-size: 18px; font-weight: 700;">LAN Share Manager</h3>
-                    <p style="font-size: 12px; color: var(--text-muted);">Автоматизированное создание и управление сетевыми папками SMB для Windows</p>
-                  </div>
-                  <div style="background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.4); border-radius: 6px; padding: 6px 12px; color: #10B981; font-weight: 600; font-size: 12px;">
-                    ✓ Режим администратора: Активен
-                  </div>
-                </div>
-
-                <!-- Network Card -->
-                <div style="background: #111827; border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; padding: 14px 18px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 16px;">
-                  <div>
-                    <div style="font-size: 11px; color: var(--text-dim);">Имя ПК:</div>
-                    <div style="font-weight: 700; font-size: 13px;">DESKTOP-MKVG1ET</div>
-                  </div>
-                  <div>
-                    <div style="font-size: 11px; color: var(--text-dim);">Локальный IPv4 (LAN):</div>
-                    <div style="font-weight: 700; font-size: 13px; color: var(--accent-cyan);">192.168.1.100</div>
-                  </div>
-                  <div>
-                    <div style="font-size: 11px; color: var(--text-dim);">Профиль сети:</div>
-                    <div style="font-weight: 700; font-size: 13px; color: #10B981;">Частная (Private)</div>
-                  </div>
-                  <div style="text-align: right;">
-                    <span style="font-size: 11px; color: var(--text-dim);">SMB Порт:</span>
-                    <div style="font-weight: 700; font-size: 13px;">TCP 445</div>
-                  </div>
-                </div>
-
-                <!-- Table Mockup -->
-                <div style="background: #111827; border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; overflow: hidden; margin-bottom: 16px;">
-                  <table style="width: 100%; border-collapse: collapse; font-size: 13px; text-align: left;">
-                    <thead>
-                      <tr style="border-bottom: 1px solid rgba(255,255,255,0.08); color: var(--text-dim);">
-                        <th style="padding: 10px 14px;">Имя ресурса</th>
-                        <th style="padding: 10px 14px;">Локальный путь</th>
-                        <th style="padding: 10px 14px;">Уровень доступа</th>
-                        <th style="padding: 10px 14px;">Статус</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr style="border-bottom: 1px solid rgba(255,255,255,0.04); background: rgba(0, 120, 212, 0.08);">
-                        <td style="padding: 10px 14px; font-weight: 600;">OBSHAYA</td>
-                        <td style="padding: 10px 14px; color: var(--text-muted);">C:\OBSHAYA</td>
-                        <td style="padding: 10px 14px;"><span style="background: rgba(96,205,255,0.15); color: #60CDFF; padding: 2px 8px; border-radius: 4px; font-size: 11px;">Чтение и запись</span></td>
-                        <td style="padding: 10px 14px; color: #10B981; font-weight: 600;">✓ Active</td>
-                      </tr>
-                      <tr style="border-bottom: 1px solid rgba(255,255,255,0.04);">
-                        <td style="padding: 10px 14px; font-weight: 600;">Documents</td>
-                        <td style="padding: 10px 14px; color: var(--text-muted);">C:\Users\Admin\Documents</td>
-                        <td style="padding: 10px 14px;"><span style="background: rgba(255,255,255,0.08); color: #D1D5DB; padding: 2px 8px; border-radius: 4px; font-size: 11px;">Только чтение</span></td>
-                        <td style="padding: 10px 14px; color: #10B981; font-weight: 600;">✓ Active</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-
-                <!-- Actions Bar -->
-                <div style="display: flex; justify-content: space-between; align-items: center;">
+            <!-- Tab 2: Create Dialog Mockup -->
+            <div class="tab-pane" id="tab-create" style="display: none;">
+              <div class="card-featured" style="max-width: 540px; margin: 0 auto;">
+                <h4 class="type-heading-4" style="margin-bottom: 16px;">Жаңа SMB ресурсын қосу</h4>
+                <div style="margin-bottom: 14px;">
+                  <label class="type-caption" style="display: block; margin-bottom: 6px;">ЖЕРГІЛІКТІ ПАПКА:</label>
                   <div style="display: flex; gap: 8px;">
-                    <button class="btn btn-secondary btn-sm">Открыть папку</button>
-                    <button class="btn btn-secondary btn-sm">Копировать путь</button>
-                    <button class="btn btn-secondary btn-sm">Диагностика</button>
-                  </div>
-                  <button class="btn btn-primary btn-sm">+ Создать общий доступ</button>
-                </div>
-              </div>
-
-              <!-- Tab 2: Create Dialog Mockup -->
-              <div class="tab-content" id="tab-create">
-                <div style="max-width: 520px; margin: 0 auto; background: #111827; border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; padding: 20px;">
-                  <h4 style="margin-bottom: 14px; font-size: 15px; font-weight: 700;">Создать общий сетевой ресурс</h4>
-                  <div style="margin-bottom: 12px;">
-                    <label style="font-size: 12px; color: var(--text-dim); display: block; margin-bottom: 4px;">Папка:</label>
-                    <div style="display: flex; gap: 8px;">
-                      <input type="text" value="C:\OBSHAYA" readonly style="flex: 1; background: #0B0F19; border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; padding: 6px 10px; color: #fff; font-size: 13px;">
-                      <button class="btn btn-secondary btn-sm">Обзор...</button>
-                    </div>
-                  </div>
-                  <div style="margin-bottom: 14px;">
-                    <label style="font-size: 12px; color: var(--text-dim); display: block; margin-bottom: 4px;">Имя общего ресурса:</label>
-                    <input type="text" value="OBSHAYA" readonly style="width: 100%; background: #0B0F19; border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; padding: 6px 10px; color: #fff; font-size: 13px;">
-                  </div>
-                  <div style="margin-bottom: 14px;">
-                    <label style="font-size: 12px; color: var(--text-dim); display: block; margin-bottom: 6px;">Уровень доступа:</label>
-                    <div style="font-size: 13px; display: flex; flex-direction: column; gap: 6px;">
-                      <div><input type="radio" name="perm"> Только чтение (Read only)</div>
-                      <div style="color: var(--accent-cyan); font-weight: 600;"><input type="radio" name="perm" checked> Чтение и запись (Read and write)</div>
-                      <div><input type="radio" name="perm"> Полный доступ (Full control)</div>
-                    </div>
-                  </div>
-                  <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 18px;">
-                    <button class="btn btn-secondary btn-sm">Отмена</button>
-                    <button class="btn btn-primary btn-sm">Создать общий доступ</button>
+                    <input type="text" class="text-input" value="C:\OBSHAYA" readonly>
+                    <button class="button-outline" style="height: 44px;">Шолу...</button>
                   </div>
                 </div>
-              </div>
-
-              <!-- Tab 3: Result Mockup -->
-              <div class="tab-content" id="tab-result">
-                <div style="max-width: 540px; margin: 0 auto; background: #111827; border: 1px solid rgba(16, 185, 129, 0.4); border-radius: 8px; padding: 24px;">
-                  <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 16px;">
-                    <div style="width: 24px; height: 24px; border-radius: 50%; background: #10B981; color: #fff; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 14px;">✓</div>
-                    <div style="font-weight: 700; font-size: 16px; color: #10B981;">Общий доступ успешно настроен!</div>
-                  </div>
-                  <div style="display: flex; flex-direction: column; gap: 10px; font-size: 13px; margin-bottom: 18px;">
-                    <div style="background: #0B0F19; padding: 8px 12px; border-radius: 6px; display: flex; justify-content: space-between;">
-                      <span style="color: var(--text-muted);">Сетевой путь:</span>
-                      <strong style="color: var(--accent-cyan);">\\DESKTOP-MKVG1ET\OBSHAYA</strong>
-                    </div>
-                    <div style="background: #0B0F19; padding: 8px 12px; border-radius: 6px; display: flex; justify-content: space-between;">
-                      <span style="color: var(--text-muted);">IP путь:</span>
-                      <strong style="color: var(--accent-cyan);">\\192.168.1.100\OBSHAYA</strong>
-                    </div>
-                  </div>
-                  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 12px; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 12px;">
-                    <div>Служба SMB: <span style="color:#10B981;">✓ Включено</span></div>
-                    <div>Брандмауэр: <span style="color:#10B981;">✓ Настроен</span></div>
-                    <div>Права SMB: <span style="color:#10B981;">✓ Настроены</span></div>
-                    <div>Права NTFS: <span style="color:#10B981;">✓ Настроены</span></div>
+                <div style="margin-bottom: 14px;">
+                  <label class="type-caption" style="display: block; margin-bottom: 6px;">ЖЕЛІДЕГІ АТАУЫ (SHARE NAME):</label>
+                  <input type="text" class="text-input" value="OBSHAYA" readonly>
+                </div>
+                <div style="margin-bottom: 20px;">
+                  <label class="type-caption" style="display: block; margin-bottom: 8px;">РҰҚСАТ ДЕҢГЕЙІ (ACCESS MODE):</label>
+                  <div style="display: flex; flex-direction: column; gap: 8px; font-size: 14px;">
+                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                      <input type="radio" name="p_mode"> Тек оқу (ReadOnly)
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-weight: 650;">
+                      <input type="radio" name="p_mode" checked> Оқу және жазу (ReadWrite — Ұсынылады)
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                      <input type="radio" name="p_mode"> Толық бақылау (FullControl)
+                    </label>
                   </div>
                 </div>
+                <div style="display: flex; justify-content: flex-end; gap: 8px;">
+                  <button class="button-outline">Болдырмау</button>
+                  <button class="button-primary">Ортақ етуді бастау</button>
+                </div>
               </div>
+            </div>
 
-              <!-- Tab 4: Diagnostics Mockup -->
-              <div class="tab-content" id="tab-diag">
-                <div style="background: #111827; border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; padding: 18px; font-size: 13px;">
-                  <h4 style="margin-bottom: 12px; font-weight: 700;">10-деңгейлі толық жүйелік диагностика:</h4>
-                  <div style="display: flex; flex-direction: column; gap: 8px;">
-                    <div style="display: flex; justify-content: space-between;"><span>[✓] Служба SMB (LanmanServer / Сервер)</span> <strong style="color: #10B981;">Running</strong></div>
-                    <div style="display: flex; justify-content: space-between;"><span>[✓] Порт TCP 445 (SMB Listener)</span> <strong style="color: #10B981;">Listening</strong></div>
-                    <div style="display: flex; justify-content: space-between;"><span>[✓] Брандмауэр Windows (Inbound TCP 445)</span> <strong style="color: #10B981;">Allowed (Private)</strong></div>
-                    <div style="display: flex; justify-content: space-between;"><span>[✓] Разрешения безопасности NTFS (ACL)</span> <strong style="color: #10B981;">Configured</strong></div>
-                    <div style="display: flex; justify-content: space-between;"><span>[✓] Сетевой пинг \\localhost\OBSHAYA</span> <strong style="color: #10B981;">Accessible</strong></div>
-                    <div style="display: flex; justify-content: space-between;"><span>[✓] Сетевой пинг \\192.168.1.100\OBSHAYA</span> <strong style="color: #10B981;">Accessible</strong></div>
+            <!-- Tab 3: Result Paths Mockup -->
+            <div class="tab-pane" id="tab-result" style="display: none;">
+              <div class="card-flat" style="max-width: 540px; margin: 0 auto; text-align: center;">
+                <div class="app-icon-squircle" style="width: 56px; height: 56px; margin: 0 auto 16px auto; font-size: 24px; background: var(--colors-canvas-soft);">
+                  ✓
+                </div>
+                <h4 class="type-heading-4" style="margin-bottom: 8px;">Ортақ қатынас сәтті бапталды.</h4>
+                <p class="type-body-sm" style="margin-bottom: 20px;">Енді кез келген компьютер мына сілтемелер арқылы кіре алады:</p>
+
+                <div style="display: flex; flex-direction: column; gap: 10px; text-align: left; margin-bottom: 24px;">
+                  <div style="background-color: var(--colors-canvas-soft); padding: 12px 16px; border-radius: var(--rounded-sm); display: flex; justify-content: space-between; align-items: center;">
+                    <span class="type-caption">СЕТЕВОЙ ПУТЬ:</span>
+                    <strong style="font-family: var(--font-mono); font-size: 13px;">\\DESKTOP-MKVG1ET\OBSHAYA</strong>
+                  </div>
+                  <div style="background-color: var(--colors-canvas-soft); padding: 12px 16px; border-radius: var(--rounded-sm); display: flex; justify-content: space-between; align-items: center;">
+                    <span class="type-caption">IP АДРЕС ПУТЬ:</span>
+                    <strong style="font-family: var(--font-mono); font-size: 13px;">\\192.168.1.100\OBSHAYA</strong>
+                  </div>
+                </div>
+
+                <div style="display: flex; justify-content: center; gap: 10px;">
+                  <button class="button-primary">Сілтемені көшіру</button>
+                  <button class="button-outline">Дайын</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Tab 4: 10-Point Diagnostics Mockup -->
+            <div class="tab-pane" id="tab-diag" style="display: none;">
+              <div style="background-color: var(--colors-canvas-soft); border-radius: var(--rounded-sm); padding: 20px;">
+                <h4 class="type-heading-4" style="margin-bottom: 14px;">10-деңгейлі кешенді авто-диагностика:</h4>
+                <div style="display: flex; flex-direction: column; gap: 10px; font-size: 14px;">
+                  <div style="display: flex; justify-content: space-between; padding-bottom: 8px; border-bottom: 1px solid var(--colors-hairline-soft);">
+                    <span>[✓] 1. LanmanServer SMB қызметінің статусы</span>
+                    <strong style="color: var(--colors-ink);">Іске қосылған (Running)</strong>
+                  </div>
+                  <div style="display: flex; justify-content: space-between; padding-bottom: 8px; border-bottom: 1px solid var(--colors-hairline-soft);">
+                    <span>[✓] 2. TCP 445 портының тыңдалуы (Listener)</span>
+                    <strong style="color: var(--colors-ink);">Белсенді (Listening)</strong>
+                  </div>
+                  <div style="display: flex; justify-content: space-between; padding-bottom: 8px; border-bottom: 1px solid var(--colors-hairline-soft);">
+                    <span>[✓] 3. Windows Firewall ережесі (Inbound 445)</span>
+                    <strong style="color: var(--colors-ink);">Рұқсат берілген (Private)</strong>
+                  </div>
+                  <div style="display: flex; justify-content: space-between; padding-bottom: 8px; border-bottom: 1px solid var(--colors-hairline-soft);">
+                    <span>[✓] 4. NTFS Security рұқсаттары (ACL)</span>
+                    <strong style="color: var(--colors-ink);">Үйлестірілген</strong>
+                  </div>
+                  <div style="display: flex; justify-content: space-between; padding-bottom: 8px; border-bottom: 1px solid var(--colors-hairline-soft);">
+                    <span>[✓] 5. Локалды пинг \\localhost\OBSHAYA</span>
+                    <strong style="color: var(--colors-ink);">Қолжетімді</strong>
+                  </div>
+                  <div style="display: flex; justify-content: space-between;">
+                    <span>[✓] 6. LAN IP пингі \\192.168.1.100\OBSHAYA</span>
+                    <strong style="color: var(--colors-ink);">Қолжетімді</strong>
                   </div>
                 </div>
               </div>
@@ -269,205 +308,268 @@
       </div>
     </section>
 
-    <!-- Comparison Section -->
-    <section class="comparison-section" id="compare">
-      <div class="container">
-        <div class="section-header">
-          <h2 class="section-title" data-i18n="secCompareTitle">Қолмен баптау мен LAN Share Manager айырмашылығы</h2>
-          <p class="section-subtitle" data-i18n="secCompareSubtitle">Windows стандартты жолы қаншалықты күрделі және утилита қалай жеңілдетеді?</p>
+    <!-- Comparison Section (Mobbin Surface Contrast: Canvas vs Canvas-Soft) -->
+    <section class="container section-gap" id="compare">
+      <div style="text-align: center; margin-bottom: var(--space-xl);">
+        <h2 class="type-heading-2" data-i18n="secCompareTitle">Қолмен баптау мен LAN Share Manager айырмашылығы.</h2>
+        <p class="type-body" style="color: var(--colors-text-muted); margin-top: var(--space-xs);" data-i18n="secCompareSubtitle">
+          Windows-тың стандартты ортақ ету жолы неліктен қатеге толы және біз оны қалай 3 секундқа түсірдік?
+        </p>
+      </div>
+
+      <div class="comparison-grid">
+        <!-- The Bad Way: White card with 1px hairline-soft -->
+        <div class="compare-card-bad">
+          <div style="display: flex; align-items: center; justify-content: space-between;">
+            <span class="type-heading-4">Стандартты Windows</span>
+            <span class="badge-soft" style="color: var(--colors-text-muted);">Қолмен 15 қадам</span>
+          </div>
+
+          <ul class="compare-list">
+            <li class="compare-item">
+              <span class="compare-icon-bad">✕</span>
+              <span><strong>Шатастыратын 15 терезе</strong>: Папка қасиеттері ➔ Доступ ➔ Безопасность ➔ Дополнительно ➔ Өзгерту.</span>
+            </li>
+            <li class="compare-item">
+              <span class="compare-icon-bad">✕</span>
+              <span><strong>NTFS қателіктері</strong>: Тек SMB рұқсатын ашып, файлдық NTFS құқығын ұмытып кетеді ➔ "Access Denied" қатесі шығады.</span>
+            </li>
+            <li class="compare-item">
+              <span class="compare-icon-bad">✕</span>
+              <span><strong>Брандмауэрді өшіріп тастау</strong>: 445 портын білмегендіктен адамдар антивирусты толық сөндіріп, вирус жұқтырады.</span>
+            </li>
+            <li class="compare-item">
+              <span class="compare-icon-bad">✕</span>
+              <span><strong>Public Network қаупі</strong>: Егер желі кездейсоқ "Общедоступная" болса, компьютерлер бірін-бірі мүлдем көрмейді.</span>
+            </li>
+          </ul>
         </div>
 
-        <div class="comparison-grid">
-          <!-- The Bad Way -->
-          <div class="compare-col compare-bad">
-            <div class="compare-header">
-              <span class="compare-badge badge-bad">Қолмен баптау (Стандартты Windows)</span>
-            </div>
-            <ul class="compare-list">
-              <li><span class="compare-icon-bad">✕</span> <span><strong>15 күрделі қадам</strong>: Папка қасиеттері ➔ Доступ ➔ Безопасность ➔ Дополнительно ➔ Өзгерту.</span></li>
-              <li><span class="compare-icon-bad">✕</span> <span><strong>NTFS қателіктері</strong>: Көптеген адамдар тек SMB-ді қосып, NTFS рұқсатын ұмытып кетеді ➔ "Access Denied" қатесі шығады.</span></li>
-              <li><span class="compare-icon-bad">✕</span> <span><strong>Брандмауэр мәселесі</strong>: Windows Firewall порт 445-ті жауып тастайды, ал қолданушылар антивирусты толық өшіріп тастап вирус жұқтырады.</span></li>
-              <li><span class="compare-icon-bad">✕</span> <span><strong>Public Network қаупі</strong>: Егер желі "Общедоступная" болса, басқалар папканы мүлдем көрмейді немесе керісінше желіге қауіп төнеді.</span></li>
-              <li><span class="compare-icon-bad">✕</span> <span><strong>Жүйелік құқықты жойып алу</strong>: Тәжірибесіз адамдар ACL баптаймын деп SYSTEM немесе Administrators құқығын өшіріп тастайды.</span></li>
-            </ul>
+        <!-- The Good Way: Canvas-soft fill, no border, with Electric Blue popular badge -->
+        <div class="compare-card-good">
+          <div style="display: flex; align-items: center; justify-content: space-between;">
+            <span class="type-heading-4">LAN Share Manager</span>
+            <!-- The single electric blue element per Mobbin spec -->
+            <span class="badge-popular">Ұсынылған</span>
           </div>
 
-          <!-- The LAN Share Manager Way -->
-          <div class="compare-col compare-good">
-            <div class="compare-header">
-              <span class="compare-badge badge-good">LAN Share Manager (1 Клик)</span>
-            </div>
-            <ul class="compare-list">
-              <li><span class="compare-icon-good">✓</span> <span><strong>Барлығы 1 батырмада</strong>: Папканы таңдайсың, атын жазасың және "Создать общий доступ" басасың (3 секунд).</span></li>
-              <li><span class="compare-icon-good">✓</span> <span><strong>Синхронды NTFS + SMB</strong>: Қос деңгейлі рұқсат (Everyone + нақты құқықтар) автоматты түрде тағайындалады.</span></li>
-              <li><span class="compare-icon-good">✓</span> <span><strong>Ақылды Брандмауэр</strong>: Брандмауэрді өшірмейді! Тек TCP 445 портын Private профиль үшін қауіпсіз түрде ашады.</span></li>
-              <li><span class="compare-icon-good">✓</span> <span><strong>Жүйелік қорғаныс</strong>: SYSTEM және Администратор құқықтары 100% сақталады, ешқашан бұзылмайды.</span></li>
-              <li><span class="compare-icon-good">✓</span> <span><strong>Дайын сілтемелер</strong>: Бірден \\ИМЯ-ПК\SHARE және \\IP-АДРЕС\SHARE дайын күйде шығады.</span></li>
-            </ul>
-          </div>
+          <ul class="compare-list">
+            <li class="compare-item">
+              <span class="compare-icon-good">✓</span>
+              <span><strong>Барлығы 1 батырмада</strong>: Папканы таңдайсыз, ат бересіз және басасыз. Барлық баптау 3 секундта бітеді.</span>
+            </li>
+            <li class="compare-item">
+              <span class="compare-icon-good">✓</span>
+              <span><strong>Синхронды SMB + NTFS</strong>: Қос деңгейлі құқықтар бірден толық үйлесімділікпен жазылады.</span>
+            </li>
+            <li class="compare-item">
+              <span class="compare-icon-good">✓</span>
+              <span><strong>Қауіпсіз Брандмауэр</strong>: Брандмауэр сөндірілмейді! Тек TCP 445 порты Private профиль үшін қауіпсіз ашылады.</span>
+            </li>
+            <li class="compare-item">
+              <span class="compare-icon-good">✓</span>
+              <span><strong>Дайын сілтемелер</strong>: Басқа компьютерге жіберетін \\ПК\SHARE және \\IP\SHARE жолдары бірден көшіріледі.</span>
+            </li>
+          </ul>
         </div>
       </div>
     </section>
 
-    <!-- Features Pillars -->
-    <section class="container" id="features">
-      <div class="section-header">
-        <h2 class="section-title" data-i18n="secFeaturesTitle">Неліктен мыңдаған сисадминдер бізді таңдайды?</h2>
+    <!-- Key Capabilities (6 Cards Grid) -->
+    <section class="container section-gap" id="features">
+      <div style="text-align: center; margin-bottom: var(--space-xl);">
+        <h2 class="type-heading-2" data-i18n="secFeaturesTitle">Негізгі мүмкіндіктер мен архитектура.</h2>
       </div>
 
       <div class="features-grid">
-        <div class="feature-card">
-          <div class="feature-icon">🔒</div>
-          <h3 class="feature-title">Least Privilege Принципі</h3>
-          <p class="feature-desc">ReadOnly, ReadWrite немесе FullControl таңдалса, жүйе дәл сол минималды рұқсатты ғана береді. Ешқашан артық рұқсат шашылмайды.</p>
+        <div class="feature-tile">
+          <div class="feature-icon-squircle">🔒</div>
+          <h3 class="type-heading-4">Least Privilege.</h3>
+          <p class="type-body-sm">ReadOnly немесе ReadWrite таңдалса, дәл сол минималды қажетті рұқсат қана беріледі. Ешқашан артық құқық ашылмайды.</p>
         </div>
 
-        <div class="feature-card">
-          <div class="feature-icon">🛡</div>
-          <h3 class="feature-title">Қауіпсіз Брандмауэр</h3>
-          <p class="feature-desc">Кездейсоқ порттар ашылмайды, брандмауэр толық өшірілмейді. Ережелер тек Private желі профиліне бекітіледі.</p>
+        <div class="feature-tile">
+          <div class="feature-icon-squircle">🛡</div>
+          <h3 class="type-heading-4">Қауіпсіз Брандмауэр.</h3>
+          <p class="type-body-sm">Кездейсоқ порттар ашылмайды. Ереже тек Private желі профиліне бекітіледі. Жүйе қауіпсіздігі 100% сақталады.</p>
         </div>
 
-        <div class="feature-card">
-          <div class="feature-icon">🩺</div>
-          <h3 class="feature-title">10-деңгейлі Авто-Диагностика</h3>
-          <p class="feature-desc">LanmanServer қызметінен бастап, нақты UNC path-қа дейін тексереді. Егер қате болса, нақты қандай бұйрықпен жөндеу керегін көрсетеді.</p>
+        <div class="feature-tile">
+          <div class="feature-icon-squircle">🩺</div>
+          <h3 class="type-heading-4">10-деңгейлі Диагностика.</h3>
+          <p class="type-body-sm">LanmanServer қызметінен бастап, нақты UNC path-қа дейін автоматты тексереді. Қате болса, нақты шешімін айтады.</p>
         </div>
 
-        <div class="feature-card">
-          <div class="feature-icon">💾</div>
-          <h3 class="feature-title">Нөлдік дерек жоғалуы</h3>
-          <p class="feature-desc">Ортақ желіні жойғанда (Remove Share), дискідегі папкалар мен файлдар ешқашан өшпейді. Тек SMB желілік тіркеуі ғана алынады.</p>
+        <div class="feature-tile">
+          <div class="feature-icon-squircle">💾</div>
+          <h3 class="type-heading-4">Нөлдік дерек жоғалуы.</h3>
+          <p class="type-body-sm">Ортақ папканы өшіргенде (Remove Share), дискідегі файлдар ешқашан өшпейді. Тек SMB желілік тіркеуі ғана алынады.</p>
         </div>
 
-        <div class="feature-card">
-          <div class="feature-icon">🔄</div>
-          <h3 class="feature-title">100% Идемпотенттілік</h3>
-          <p class="feature-desc">Бірнеше рет қатарынан іске қосқанмен де конфигурация дубликатталмайды және файлдық жүйе бұзылмайды.</p>
+        <div class="feature-tile">
+          <div class="feature-icon-squircle">🔄</div>
+          <h3 class="type-heading-4">100% Идемпотенттілік.</h3>
+          <p class="type-body-sm">Бірнеше рет қатарынан іске қосқанмен де конфигурация дубликатталмайды және файлдық жүйе бұзылмайды.</p>
         </div>
 
-        <div class="feature-card">
-          <div class="feature-icon">⚡</div>
-          <h3 class="feature-title">JSON Экспорт пен Импорт</h3>
-          <p class="feature-desc">Барлық ортақ папкалардың баптауын бір JSON файлына көшіріп, басқа компьютерге немесе жаңа Windows-қа лезде импорттай аласыз.</p>
+        <div class="feature-tile">
+          <div class="feature-icon-squircle">⚡</div>
+          <h3 class="type-heading-4">JSON Экспорт & Импорт.</h3>
+          <p class="type-body-sm">Барлық баптауларды бір JSON файлына көшіріп, жаңа компьютерге немесе жаңа Windows орнатқанда лезде импорттаңыз.</p>
         </div>
       </div>
     </section>
 
-    <!-- Interactive CLI Simulator -->
-    <section class="container" id="cli">
-      <div class="section-header">
-        <h2 class="section-title" data-i18n="secTerminalTitle">Интерактивті CLI Симуляторы</h2>
-        <p class="section-subtitle">Серверлерді және батч скрипттерді автоматтандыруға арналған консольдік интерфейс.</p>
+    <!-- Interactive CLI Terminal Simulator -->
+    <section class="container section-gap" id="cli">
+      <div style="text-align: center; margin-bottom: var(--space-xl);">
+        <h2 class="type-heading-2" data-i18n="secTerminalTitle">Интерактивті CLI Симуляторы.</h2>
+        <p class="type-body" style="color: var(--colors-text-muted); margin-top: var(--space-xs);">
+          Серверлерді және батч скрипттерді автоматтандыруға арналған консольдік интерфейс.
+        </p>
       </div>
 
-      <div class="terminal-section">
-        <div class="terminal-header">
-          <div class="terminal-tabs">
-            <button class="cli-btn active" data-cmd="create">create</button>
-            <button class="cli-btn" data-cmd="list">list</button>
-            <button class="cli-btn" data-cmd="test">test</button>
-            <button class="cli-btn" data-cmd="export">export</button>
+      <div class="cli-container">
+        <div class="cli-controls">
+          <div class="segmented-control">
+            <button class="cli-tab-btn segmented-item active" data-cmd="create">create</button>
+            <button class="cli-tab-btn segmented-item" data-cmd="list">list</button>
+            <button class="cli-tab-btn segmented-item" data-cmd="test">test</button>
+            <button class="cli-tab-btn segmented-item" data-cmd="export">export</button>
           </div>
-          <div style="font-family: var(--font-mono); font-size: 11px; color: var(--text-dim);">PowerShell 7+ / Windows PowerShell 5.1</div>
+          <span class="type-caption" style="font-family: var(--font-mono);">Windows PowerShell 5.1 / PowerShell 7+</span>
         </div>
-        <div class="terminal-body" id="cli-terminal-body">
+
+        <div class="cli-screen" id="cli-screen-body">
           <!-- Populated by script.js -->
         </div>
       </div>
     </section>
 
-    <!-- Security Architecture (Axiom / MAS Style) -->
-    <section class="container" id="security">
-      <div class="security-card">
-        <h2 style="font-size: 24px; font-weight: 800; margin-bottom: 8px;" data-i18n="secSecurityTitle">
-          Axiom / MAS стиліндегі Қауіпсіздік Архитектурасы
-        </h2>
-        <p style="color: var(--text-muted); font-size: 15px;">
-          Неліктен <code style="color: var(--accent-cyan); background: rgba(255,255,255,0.08); padding: 2px 6px; border-radius: 4px;">irm azamaperdeev05.github.io/lsm | iex</code> 100% қауіпсіз және жүйені ластамайды?
-        </p>
+    <!-- Axiom / MAS Style Security Architecture -->
+    <section class="container section-gap">
+      <div class="card-featured" style="padding: var(--space-xxl) var(--space-xl);">
+        <div style="max-width: 680px; margin: 0 auto; text-align: center; margin-bottom: var(--space-xl);">
+          <h2 class="type-heading-2" data-i18n="secSecurityTitle">Axiom / MAS стиліндегі қауіпсіздік.</h2>
+          <p class="type-body-lg" style="margin-top: var(--space-xs);">
+            Неліктен <code>irm azamaperdeev05.github.io/lsm | iex</code> 100% қауіпсіз және жүйені ластамайды?
+          </p>
+        </div>
 
-        <div class="security-steps">
-          <div class="sec-step">
-            <div class="sec-num">1</div>
-            <strong style="display:block; margin-bottom: 6px;">Pre-flight Checks</strong>
-            <p style="font-size: 13px; color: var(--text-muted);">PowerShell LanguageMode және .NET ортасы тексеріледі, бөгде антивирустар WMI арқылы сканерленеді.</p>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: var(--space-lg);">
+          <div class="card-flat">
+            <div class="brand-squircle" style="width: 32px; height: 32px; margin-bottom: 12px; font-weight: 650;">1</div>
+            <h4 class="type-heading-4" style="font-size: 18px; margin-bottom: 6px;">Pre-flight Checks.</h4>
+            <p class="type-body-sm">PowerShell LanguageMode және .NET ортасы тексеріледі, бөгде антивирустар сканерленеді.</p>
           </div>
 
-          <div class="sec-step">
-            <div class="sec-num">2</div>
-            <strong style="display:block; margin-bottom: 6px;">Multi-Mirror Fallback</strong>
-            <p style="font-size: 13px; color: var(--text-muted);">GitHub Releases және Raw CDN арқылы пакет сенімді екі бөлек серверден жүктеледі.</p>
+          <div class="card-flat">
+            <div class="brand-squircle" style="width: 32px; height: 32px; margin-bottom: 12px; font-weight: 650;">2</div>
+            <h4 class="type-heading-4" style="font-size: 18px; margin-bottom: 6px;">Multi-Mirror Fallback.</h4>
+            <p class="type-body-sm">GitHub Releases және Raw CDN арқылы екі тәуелсіз серверден кезекпен жүктеледі.</p>
           </div>
 
-          <div class="sec-step">
-            <div class="sec-num">3</div>
-            <strong style="display:block; margin-bottom: 6px;">SHA-256 Hash-Pinning</strong>
-            <p style="font-size: 13px; color: var(--text-muted);">Жүктелген кодтың хэші қатаң салыстырылады. Егер 1 бит өзгерсе — орындалмай дереу жойылады.</p>
+          <div class="card-flat">
+            <div class="brand-squircle" style="width: 32px; height: 32px; margin-bottom: 12px; font-weight: 650;">3</div>
+            <h4 class="type-heading-4" style="font-size: 18px; margin-bottom: 6px;">SHA-256 Hash-Pinning.</h4>
+            <p class="type-body-sm">Жүктелген кодтың хэші қатаң тексеріледі. Егер 1 бит өзгерсе — орындалмай дереу жойылады.</p>
           </div>
 
-          <div class="sec-step">
-            <div class="sec-num">4</div>
-            <strong style="display:block; margin-bottom: 6px;">Zero-Trace Cleanup</strong>
-            <p style="font-size: 13px; color: var(--text-muted);">Бағдарлама Temp-тегі кездейсоқ GUID папкасында орындалып, жабылған соң өзін-өзі түгел өшіреді.</p>
+          <div class="card-flat">
+            <div class="brand-squircle" style="width: 32px; height: 32px; margin-bottom: 12px; font-weight: 650;">4</div>
+            <h4 class="type-heading-4" style="font-size: 18px; margin-bottom: 6px;">Zero-Trace Cleanup.</h4>
+            <p class="type-body-sm">Бағдарлама Temp-тегі кездейсоқ GUID папкасында орындалып, жабылған соң өзін түгел өшіреді.</p>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- FAQ Accordion -->
-    <section class="container faq-section" id="faq">
-      <div class="section-header">
-        <h2 class="section-title" data-i18n="secFaqTitle">Жиі қойылатын сұрақтар</h2>
+    <!-- FAQ Accordion (Mobbin .faq-row stadium/16px bars in canvas-soft) -->
+    <section class="container section-gap" id="faq">
+      <div style="text-align: center; margin-bottom: var(--space-xl);">
+        <h2 class="type-heading-2" data-i18n="secFaqTitle">Жиі қойылатын сұрақтар.</h2>
       </div>
 
-      <div class="faq-item active">
-        <div class="faq-question">
-          <span>LAN Share Manager қандай Windows нұсқаларында жұмыс істейді?</span>
-          <span class="faq-arrow">▼</span>
-        </div>
-        <div class="faq-answer">
-          Windows 10 (1809 және одан жаңа), Windows 11 барлық нұсқалары (Home, Pro, Enterprise) және Windows Server 2019/2022/2025 жүйелерінде толықтай жұмыс істейді.
-        </div>
-      </div>
+      <div class="faq-list container-narrow">
+        <button class="faq-row active">
+          <div class="faq-row-header">
+            <span>LAN Share Manager қандай Windows нұсқаларында жұмыс істейді?</span>
+            <span class="faq-chevron">▼</span>
+          </div>
+          <div class="faq-answer">
+            Windows 10 (1809 және одан жаңа), Windows 11 барлық нұсқалары (Home, Pro, Enterprise) және Windows Server 2019/2022/2025 жүйелерінде толықтай жұмыс істейді.
+          </div>
+        </button>
 
-      <div class="faq-item">
-        <div class="faq-question">
-          <span>Неге міндетті түрде Администратор құқығы қажет?</span>
-          <span class="faq-arrow">▼</span>
-        </div>
-        <div class="faq-answer">
-          Windows жүйесінде SMB желілік ресурстарын тіркеу, Брандмауэр ережелерін (TCP 445) қосу және файлдық жүйенің NTFS қауіпсіздік ережелерін баптау тек Administrator құқығымен ғана орындалады.
-        </div>
-      </div>
+        <button class="faq-row">
+          <div class="faq-row-header">
+            <span>Неге міндетті түрде Администратор құқығы қажет?</span>
+            <span class="faq-chevron">▼</span>
+          </div>
+          <div class="faq-answer">
+            Windows жүйесінде SMB желілік ресурстарын тіркеу, Брандмауэр ережелерін (TCP 445) қосу және файлдық жүйенің NTFS қауіпсіздік ережелерін баптау тек Administrator құқығымен орындалады.
+          </div>
+        </button>
 
-      <div class="faq-item">
-        <div class="faq-question">
-          <span>Ресурсты жойғанда (Remove Share) файлдарым өшіп кетпей ме?</span>
-          <span class="faq-arrow">▼</span>
-        </div>
-        <div class="faq-answer">
-          Жоқ! Бағдарламаның басты қауіпсіздік ережесі — ол тек SMB желілік ортақ қатынасын ғана өшіреді. Дискідегі папкаңыз бен барлық файлдарыңыз 100% сол қалпында қалады.
-        </div>
-      </div>
+        <button class="faq-row">
+          <div class="faq-row-header">
+            <span>Ресурсты жойғанда (Remove Share) файлдарым өшіп кетпей ме?</span>
+            <span class="faq-chevron">▼</span>
+          </div>
+          <div class="faq-answer">
+            Жоқ! Бағдарламаның басты қауіпсіздік ережесі — ол тек SMB желілік ортақ қатынасын ғана өшіреді. Дискідегі папкаңыз бен барлық файлдарыңыз 100% сол қалпында қалады.
+          </div>
+        </button>
 
-      <div class="faq-item">
-        <div class="faq-question">
-          <span>Бағдарлама құпия сөздерді немесе логиндерді сақтай ма?</span>
-          <span class="faq-arrow">▼</span>
-        </div>
-        <div class="faq-answer">
-          Жоқ! LAN Share Manager ешқашан құпия сөздерді сұрамайды және сақтамайды. Барлық аутентификация Windows-тың стандартты қауіпсіздік механизмі (NTLMv2 / Kerberos) арқылы жүреді.
-        </div>
+        <button class="faq-row">
+          <div class="faq-row-header">
+            <span>Бағдарлама құпия сөздерді немесе логиндерді сақтай ма?</span>
+            <span class="faq-chevron">▼</span>
+          </div>
+          <div class="faq-answer">
+            Жоқ! LAN Share Manager ешқашан құпия сөздерді сұрамайды және сақтамайды. Барлық аутентификация Windows-тың стандартты қауіпсіздік механизмі (NTLMv2 / Kerberos) арқылы жүреді.
+          </div>
+        </button>
       </div>
     </section>
   </main>
 
-  <!-- Footer -->
-  <footer>
+  <!-- Full-bleed Near-Black Footer with 24px Rounded Top Corners (Polarity Inversion) -->
+  <footer class="footer-band">
     <div class="container">
-      <p style="margin-bottom: 8px;"><strong>LAN Share Manager</strong> — Open Source Windows Networking Utility</p>
-      <p>MIT License • Автор: <a href="https://github.com/Azamaperdeev05" target="_blank">Azamat Perdeev</a> • <a href="https://github.com/Azamaperdeev05/lan-share-manager" target="_blank">GitHub Репозиторийі</a></p>
+      <div class="footer-grid">
+        <div>
+          <div class="footer-wordmark">LAN Share Manager.</div>
+          <p class="footer-tagline">
+            Windows жүйесінде желілік SMB папкаларын бір батырмамен баптайтын ашық бастапқы кодты утилита.
+          </p>
+        </div>
+
+        <div>
+          <div class="footer-col-title">Ресурстар</div>
+          <ul class="footer-links">
+            <li><a href="https://github.com/Azamaperdeev05/lan-share-manager" target="_blank">GitHub Repository ↗</a></li>
+            <li><a href="https://github.com/Azamaperdeev05/lan-share-manager/releases" target="_blank">Releases & Binaries</a></li>
+            <li><a href="components.html">Mobbin UI Kit Showcase ↗</a></li>
+            <li><a href="https://azamaperdeev05.github.io/lsm/">PowerShell Launcher</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <div class="footer-col-title">Құжаттама</div>
+          <ul class="footer-links">
+            <li><a href="#features">Мүмкіндіктер</a></li>
+            <li><a href="#compare">Салыстыру</a></li>
+            <li><a href="#cli">CLI анықтамалығы</a></li>
+            <li><a href="#faq">Сұрақ-жауап</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div>MIT License • Автор: <a href="https://github.com/Azamaperdeev05" target="_blank" style="color: #fff; text-decoration: none; font-weight: 650;">Azamat Perdeev</a></div>
+        <div>Crafted with Mobbin Design System standards.</div>
+      </div>
     </div>
   </footer>
 
