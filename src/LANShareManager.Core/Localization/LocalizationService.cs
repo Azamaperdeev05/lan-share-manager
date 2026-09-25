@@ -139,6 +139,12 @@ public static class LocalizationService
             [AppLanguage.Russian] = "Профиль сети:",
             [AppLanguage.English] = "Network Profile:"
         },
+        ["OsVersion"] = new()
+        {
+            [AppLanguage.Kazakh] = "Жүйе нұсқасы (ОС):",
+            [AppLanguage.Russian] = "Версия ОС (Windows):",
+            [AppLanguage.English] = "OS Version (Windows):"
+        },
         ["BtnSwitchPrivate"] = new()
         {
             [AppLanguage.Kazakh] = "Желіні Private қылу",

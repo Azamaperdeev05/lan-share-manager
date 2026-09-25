@@ -20,6 +20,7 @@ TestResults/
 # Publish artifacts
 publish/*
 !publish/LANShareManager-v1.0.0-win-x64.zip
+!publish/LANShareManager-v1.1.0-win-x64.zip
 dist/
 
 # OS generated

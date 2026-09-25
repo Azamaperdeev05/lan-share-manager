@@ -6,17 +6,21 @@ using LANShareManager.Core.Interfaces;
 using LANShareManager.Core.Models;
 using LANShareManager.Infrastructure.Process;
 
+using LANShareManager.Infrastructure.OS;
+
 namespace LANShareManager.Infrastructure.Network;
 
 public class WindowsNetworkService : INetworkService
 {
     private readonly ILoggerService _logger;
     private readonly PowerShellProcessRunner _runner;
+    private readonly IOsService _osService;
 
-    public WindowsNetworkService(ILoggerService logger, PowerShellProcessRunner runner)
+    public WindowsNetworkService(ILoggerService logger, PowerShellProcessRunner runner, IOsService? osService = null)
     {
         _logger = logger;
         _runner = runner;
+        _osService = osService ?? new WindowsOsService(logger);
     }
 
     public async Task<NetworkInfo> GetNetworkInfoAsync()
@@ -24,7 +28,8 @@ public class WindowsNetworkService : INetworkService
         var info = new NetworkInfo
         {
             ComputerName = Environment.MachineName,
-            SmbPort = 445
+            SmbPort = 445,
+            OsInfo = _osService.GetOsInfo()
         };
 
         // Network interfaces inspection
@@ -99,7 +104,7 @@ public class WindowsNetworkService : INetworkService
         // Query Windows Network Category Profile (Private, Public, Domain)
         info.NetworkProfile = await DetectNetworkCategoryAsync(info.ActiveAdapterName);
 
-        _logger.LogInfo($"Detected Network: PC={info.ComputerName}, IP={info.LocalIPv4}, Profile={info.NetworkProfile}, Adapter={info.ActiveAdapterName}");
+        _logger.LogInfo($"Detected Network: PC={info.ComputerName}, OS={info.OsInfo?.FullDescription}, IP={info.LocalIPv4}, Profile={info.NetworkProfile}, Adapter={info.ActiveAdapterName}");
         return info;
     }
 

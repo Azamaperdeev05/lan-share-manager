@@ -53,6 +53,7 @@ public class NetworkInfo
     public string DefaultGateway { get; set; } = string.Empty;
     public NetworkCategory NetworkProfile { get; set; } = NetworkCategory.Unknown;
     public int SmbPort { get; set; } = 445;
+    public WindowsOsInfo? OsInfo { get; set; }
 
     public string NetworkProfileDisplay => NetworkProfile switch
     {
@@ -61,6 +62,40 @@ public class NetworkInfo
         NetworkCategory.DomainAuthenticated => "Доменная (Domain)",
         _ => "Неизвестно"
     };
+}
+
+public class WindowsOsInfo
+{
+    public string ProductName { get; set; } = "Windows";
+    public string DisplayVersion { get; set; } = string.Empty;
+    public int BuildNumber { get; set; }
+    public int UpdateRevision { get; set; }
+    public string Architecture { get; set; } = string.Empty;
+    public string InstallationType { get; set; } = "Client";
+    public bool IsWindows11 => BuildNumber >= 22000;
+    public bool IsServer => InstallationType.Contains("Server", StringComparison.OrdinalIgnoreCase);
+
+    public string BuildString => UpdateRevision > 0 ? $"{BuildNumber}.{UpdateRevision}" : BuildNumber.ToString();
+
+    public List<string> InstalledAntivirus { get; set; } = new();
+    public bool HasThirdPartyAntivirus => InstalledAntivirus.Any(av => !av.Contains("Windows Defender", StringComparison.OrdinalIgnoreCase) && !av.Contains("Microsoft Defender", StringComparison.OrdinalIgnoreCase));
+    public string AntivirusSummary => InstalledAntivirus.Count > 0 ? string.Join(", ", InstalledAntivirus) : "Windows Defender";
+
+    public string FullDescription
+    {
+        get
+        {
+            var name = !string.IsNullOrWhiteSpace(ProductName)
+                ? ProductName
+                : (IsWindows11 ? "Windows 11" : "Windows 10");
+
+            var ver = !string.IsNullOrWhiteSpace(DisplayVersion) ? $" {DisplayVersion}" : "";
+            var arch = !string.IsNullOrWhiteSpace(Architecture) ? $" ({Architecture})" : "";
+            var build = BuildNumber > 0 ? $" [Build {BuildString}]" : "";
+
+            return $"{name}{ver}{arch}{build}".Trim();
+        }
+    }
 }
 
 public class DiagnosticItem

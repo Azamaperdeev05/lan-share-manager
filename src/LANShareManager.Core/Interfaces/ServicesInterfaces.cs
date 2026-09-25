@@ -33,6 +33,11 @@ public interface INetworkService
     Task<bool> SwitchNetworkToPrivateAsync(string? interfaceAlias = null);
 }
 
+public interface IOsService
+{
+    WindowsOsInfo GetOsInfo();
+}
+
 public interface IDiagnosticsService
 {
     Task<DiagnosticReport> RunFullDiagnosticsAsync(string shareName, string localPath);

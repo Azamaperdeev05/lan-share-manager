@@ -57,9 +57,10 @@
         <Border Grid.Row="1" Style="{StaticResource CardBorder}" Margin="0,0,0,16">
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="1.1*" />
+                    <ColumnDefinition Width="1.5*" />
+                    <ColumnDefinition Width="1.1*" />
+                    <ColumnDefinition Width="1.1*" />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
 
@@ -69,16 +70,21 @@
                 </StackPanel>
 
                 <StackPanel Grid.Column="1">
+                    <TextBlock x:Name="TxtOsLabel" Text="Жүйе нұсқасы (ОС):" Foreground="{StaticResource TextSecondaryBrush}" FontSize="12" />
+                    <TextBlock x:Name="TxtOsVersion" Text="Определение..." FontWeight="Bold" FontSize="14" Foreground="{StaticResource TextPrimaryBrush}" Margin="0,2,0,0" />
+                </StackPanel>
+
+                <StackPanel Grid.Column="2">
                     <TextBlock x:Name="TxtIpLabel" Text="Жергілікті IPv4 (LAN):" Foreground="{StaticResource TextSecondaryBrush}" FontSize="12" />
                     <TextBlock x:Name="TxtLocalIp" Text="Определение..." FontWeight="Bold" FontSize="14" Foreground="{StaticResource PrimaryBrush}" Margin="0,2,0,0" />
                 </StackPanel>
 
-                <StackPanel Grid.Column="2">
+                <StackPanel Grid.Column="3">
                     <TextBlock x:Name="TxtProfileLabel" Text="Желі профилі:" Foreground="{StaticResource TextSecondaryBrush}" FontSize="12" />
                     <TextBlock x:Name="TxtNetworkProfile" Text="Определение..." FontWeight="Bold" FontSize="14" Foreground="{StaticResource TextPrimaryBrush}" Margin="0,2,0,0" />
                 </StackPanel>
 
-                <StackPanel Grid.Column="3" Orientation="Horizontal" VerticalAlignment="Center">
+                <StackPanel Grid.Column="4" Orientation="Horizontal" VerticalAlignment="Center">
                     <Button x:Name="BtnSwitchPrivate" Content="Желіні Private қылу" Style="{StaticResource SecondaryButton}" Height="30" Margin="0,0,8,0" Visibility="Collapsed" Click="BtnSwitchPrivate_Click" />
                     <Button x:Name="BtnRefreshNetwork" Content="Жаңарту" Style="{StaticResource SecondaryButton}" Height="30" Click="BtnRefreshNetwork_Click" />
                 </StackPanel>

@@ -16,6 +16,7 @@ using LANShareManager.Infrastructure.Logging;
 using LANShareManager.Infrastructure.Network;
 using LANShareManager.Infrastructure.NTFS;
 using LANShareManager.Infrastructure.Orchestration;
+using LANShareManager.Infrastructure.OS;
 using LANShareManager.Infrastructure.Process;
 using LANShareManager.Infrastructure.SMB;
 
@@ -28,6 +29,7 @@ public class Program
     private static INtfsPermissionService _ntfsService = null!;
     private static IFirewallService _firewallService = null!;
     private static INetworkService _networkService = null!;
+    private static IOsService _osService = null!;
     private static IDiagnosticsService _diagnosticsService = null!;
     private static IShareOrchestrator _orchestrator = null!;
     private static IShareConfigSerializer _serializer = null!;
@@ -37,6 +39,8 @@ public class Program
         try { Encoding.RegisterProvider(CodePagesEncodingProvider.Instance); } catch { }
         Console.OutputEncoding = Encoding.UTF8;
         Console.InputEncoding = Encoding.UTF8;
+
+        ConsoleQuickEditHelper.DisableQuickEdit();
 
         InitializeServices();
 
@@ -50,7 +54,8 @@ public class Program
                 _networkService,
                 _diagnosticsService,
                 _orchestrator,
-                _serializer);
+                _serializer,
+                _osService);
             await menu.RunAsync();
             return 0;
         }
@@ -108,8 +113,9 @@ public class Program
         _ntfsService = new NtfsPermissionService(_logger, processRunner);
 #pragma warning restore CA1416
         _firewallService = new WindowsFirewallService(_logger, processRunner);
-        _networkService = new WindowsNetworkService(_logger, processRunner);
-        _diagnosticsService = new WindowsDiagnosticsService(_smbService, _ntfsService, _firewallService, _networkService, _logger);
+        _osService = new WindowsOsService(_logger);
+        _networkService = new WindowsNetworkService(_logger, processRunner, _osService);
+        _diagnosticsService = new WindowsDiagnosticsService(_smbService, _ntfsService, _firewallService, _networkService, _logger, _osService);
         _orchestrator = new ShareOrchestrator(_smbService, _ntfsService, _firewallService, _networkService, _diagnosticsService, _logger);
         _serializer = new ShareConfigSerializer();
     }
@@ -139,6 +145,15 @@ public class Program
         Console.WriteLine(" LAN Share Manager - Управление общими папками SMB");
         Console.WriteLine("==================================================");
         Console.ResetColor();
+
+        var osInfo = _osService.GetOsInfo();
+        if (!string.IsNullOrWhiteSpace(osInfo.FullDescription))
+        {
+            Console.Write("Операционная система:      ");
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.WriteLine(osInfo.FullDescription);
+            Console.ResetColor();
+        }
 
         bool isAdmin = IsAdministrator();
         Console.Write("Привилегии администратора: ");

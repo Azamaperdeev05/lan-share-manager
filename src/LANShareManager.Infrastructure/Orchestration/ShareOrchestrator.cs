@@ -80,8 +80,8 @@ public class ShareOrchestrator : IShareOrchestrator
 
         try
         {
-            // Auto-check and start LanmanServer (Server service) if needed
-            await EnsureLanmanServerRunningAsync();
+            // Auto-check and start core services (LanmanServer & Winmgmt) if needed
+            await EnsureCoreServicesRunningAsync();
             // 2. Ensure Directory Exists
             if (!Directory.Exists(request.FolderPath))
             {
@@ -188,33 +188,60 @@ public class ShareOrchestrator : IShareOrchestrator
         return await _diagnosticsService.RunFullDiagnosticsAsync(shareName, path);
     }
 
-    private async Task EnsureLanmanServerRunningAsync()
+    private async Task EnsureCoreServicesRunningAsync()
     {
         if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             return;
 
+        await EnsureServiceConfiguredAndStartedAsync("LanmanServer");
+        await EnsureServiceConfiguredAndStartedAsync("Winmgmt");
+    }
+
+    private async Task EnsureServiceConfiguredAndStartedAsync(string serviceName)
+    {
+#pragma warning disable CA1416
         try
         {
-            using var sc = new ServiceController("LanmanServer");
+            using var sc = new ServiceController(serviceName);
             if (sc.Status != ServiceControllerStatus.Running && sc.Status != ServiceControllerStatus.StartPending)
             {
-                _logger.LogWarning($"LanmanServer status is {sc.Status}. Attempting to start service automatically...");
+                _logger.LogWarning($"{serviceName} status is {sc.Status}. Ensuring startup type is 'auto' (MAS technique)...");
+
+                // Configure startup type to auto (sc.exe config <service> start= auto) to avoid Error 1058 (disabled service)
+                try
+                {
+                    var configProc = new System.Diagnostics.ProcessStartInfo
+                    {
+                        FileName = "sc.exe",
+                        Arguments = $"config {serviceName} start= auto",
+                        CreateNoWindow = true,
+                        UseShellExecute = false
+                    };
+                    using var cp = System.Diagnostics.Process.Start(configProc);
+                    if (cp != null) await cp.WaitForExitAsync();
+                }
+                catch (Exception configEx)
+                {
+                    _logger.LogWarning($"sc.exe config {serviceName} warning: {configEx.Message}");
+                }
+
+                // Attempt ServiceController.Start
                 try
                 {
                     sc.Start();
                     sc.WaitForStatus(ServiceControllerStatus.Running, TimeSpan.FromSeconds(5));
-                    _logger.LogInfo("LanmanServer service started successfully via ServiceController.");
+                    _logger.LogInfo($"{serviceName} service started successfully via ServiceController.");
                     return;
                 }
                 catch (Exception scEx)
                 {
-                    _logger.LogWarning($"ServiceController.Start failed: {scEx.Message}. Attempting 'net start LanmanServer'...");
+                    _logger.LogWarning($"ServiceController.Start failed for {serviceName}: {scEx.Message}. Attempting 'net start {serviceName}'...");
                 }
 
                 var proc = new System.Diagnostics.ProcessStartInfo
                 {
                     FileName = "net.exe",
-                    Arguments = "start LanmanServer",
+                    Arguments = $"start {serviceName}",
                     CreateNoWindow = true,
                     UseShellExecute = false
                 };
@@ -222,13 +249,46 @@ public class ShareOrchestrator : IShareOrchestrator
                 if (p != null)
                 {
                     await p.WaitForExitAsync();
-                    _logger.LogInfo($"'net start LanmanServer' exited with code {p.ExitCode}");
+                    _logger.LogInfo($"'net start {serviceName}' exited with code {p.ExitCode}");
                 }
             }
         }
         catch (Exception ex)
         {
-            _logger.LogWarning($"EnsureLanmanServerRunningAsync warning: {ex.Message}");
+            _logger.LogWarning($"EnsureServiceConfiguredAndStartedAsync({serviceName}) warning: {ex.Message}");
+        }
+#pragma warning restore CA1416
+    }
+
+    public static async Task<bool> SalvageWmiRepositoryAsync(ILoggerService? logger = null)
+    {
+        if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            return false;
+
+        try
+        {
+            logger?.LogInfo("Running 'winmgmt /salvagerepository' to repair WMI repository (MAS technique)...");
+            var psi = new System.Diagnostics.ProcessStartInfo
+            {
+                FileName = "winmgmt.exe",
+                Arguments = "/salvagerepository",
+                CreateNoWindow = true,
+                UseShellExecute = false
+            };
+            using var p = System.Diagnostics.Process.Start(psi);
+            if (p != null)
+            {
+                await p.WaitForExitAsync();
+                bool ok = p.ExitCode == 0;
+                logger?.LogInfo($"'winmgmt /salvagerepository' completed with exit code: {p.ExitCode}");
+                return ok;
+            }
+            return false;
+        }
+        catch (Exception ex)
+        {
+            logger?.LogWarning($"SalvageWmiRepositoryAsync failed: {ex.Message}");
+            return false;
         }
     }
 }

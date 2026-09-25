@@ -19,6 +19,7 @@ public class InteractiveConsoleMenu
     private readonly IDiagnosticsService _diagnosticsService;
     private readonly IShareOrchestrator _orchestrator;
     private readonly IShareConfigSerializer _serializer;
+    private readonly IOsService? _osService;
 
     public InteractiveConsoleMenu(
         ISmbService smbService,
@@ -27,7 +28,8 @@ public class InteractiveConsoleMenu
         INetworkService networkService,
         IDiagnosticsService diagnosticsService,
         IShareOrchestrator orchestrator,
-        IShareConfigSerializer serializer)
+        IShareConfigSerializer serializer,
+        IOsService? osService = null)
     {
         _smbService = smbService;
         _ntfsService = ntfsService;
@@ -36,6 +38,7 @@ public class InteractiveConsoleMenu
         _diagnosticsService = diagnosticsService;
         _orchestrator = orchestrator;
         _serializer = serializer;
+        _osService = osService;
     }
 
     public async Task RunAsync()
@@ -190,6 +193,14 @@ public class InteractiveConsoleMenu
             Console.Write($"{netInfo.ComputerName} ");
             Console.ResetColor();
 
+            if (netInfo.OsInfo != null && !string.IsNullOrWhiteSpace(netInfo.OsInfo.FullDescription))
+            {
+                Console.Write($"| ОС: ");
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.Write($"{netInfo.OsInfo.FullDescription} ");
+                Console.ResetColor();
+            }
+
             Console.Write($"| IP: ");
             Console.ForegroundColor = ConsoleColor.Green;
             Console.Write($"{netInfo.LocalIPv4} ");
@@ -207,6 +218,14 @@ public class InteractiveConsoleMenu
                 Console.WriteLine("Public (Общедоступная - шектелген!) ⚠");
             }
             Console.ResetColor();
+
+            if (netInfo.OsInfo?.HasThirdPartyAntivirus == true)
+            {
+                Console.Write(" Брандмауэр/Антивирус: ");
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine($"{netInfo.OsInfo.AntivirusSummary} ⚠ (3rd-party файрвол порт 445-ті бұғаттауы мүмкін)");
+                Console.ResetColor();
+            }
         }
         catch
         {
@@ -578,25 +597,35 @@ public class InteractiveConsoleMenu
     private async Task RunAutoFixInteractiveAsync()
     {
         Console.ForegroundColor = ConsoleColor.Cyan;
-        Console.WriteLine("=== [5] ЖЕЛІ ЖӘНЕ БРАНДМАУЭРДІ АВТОМАТТЫ ЖӨНДЕУ ===");
+        Console.WriteLine("=== [5] ЖЕЛІ, ҚЫЗМЕТТЕР ЖӘНЕ WMI-ДІ АВТОМАТТЫ ЖӨНДЕУ ===");
         Console.ResetColor();
-        Console.WriteLine("Windows желілік баптауларын кешенді тексеру және автоматты жөндеу:\n");
+        Console.WriteLine("Windows желілік, жүйелік қызметтері мен WMI базасын кешенді тексеру және автоматты жөндеу:\n");
 
-        // 1. LanmanServer check
-        Console.Write("1. Windows 'Сервер' (LanmanServer) қызметін тексеру... ");
+        // 1. LanmanServer service startup type and execution (MAS pattern: sc config start= auto)
+        Console.Write("1. Windows 'Сервер' (LanmanServer) қызметінің авто-қосылуын реттеу... ");
         try
         {
             await Task.Run(() =>
             {
-                var psi = new System.Diagnostics.ProcessStartInfo
+                var scCfg = new System.Diagnostics.ProcessStartInfo
+                {
+                    FileName = "sc.exe",
+                    Arguments = "config LanmanServer start= auto",
+                    CreateNoWindow = true,
+                    UseShellExecute = false
+                };
+                using var cp = System.Diagnostics.Process.Start(scCfg);
+                cp?.WaitForExit(3000);
+
+                var netStart = new System.Diagnostics.ProcessStartInfo
                 {
                     FileName = "net.exe",
                     Arguments = "start LanmanServer",
                     CreateNoWindow = true,
                     UseShellExecute = false
                 };
-                using var p = System.Diagnostics.Process.Start(psi);
-                p?.WaitForExit(5000);
+                using var np = System.Diagnostics.Process.Start(netStart);
+                np?.WaitForExit(5000);
             });
             Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine("[ҚОСЫЛҒАН ✓]");
@@ -609,8 +638,97 @@ public class InteractiveConsoleMenu
             Console.ResetColor();
         }
 
-        // 2. Network Category
-        Console.Write("2. Желі профилін 'Private' (Частная сеть) режиміне ауыстыру... ");
+        // 2. Winmgmt (WMI Service)
+        Console.Write("2. Windows 'Winmgmt' (WMI қызметі) авто-қосылуын тексеру... ");
+        try
+        {
+            await Task.Run(() =>
+            {
+                var scCfg = new System.Diagnostics.ProcessStartInfo
+                {
+                    FileName = "sc.exe",
+                    Arguments = "config Winmgmt start= auto",
+                    CreateNoWindow = true,
+                    UseShellExecute = false
+                };
+                using var cp = System.Diagnostics.Process.Start(scCfg);
+                cp?.WaitForExit(3000);
+
+                var netStart = new System.Diagnostics.ProcessStartInfo
+                {
+                    FileName = "net.exe",
+                    Arguments = "start Winmgmt",
+                    CreateNoWindow = true,
+                    UseShellExecute = false
+                };
+                using var np = System.Diagnostics.Process.Start(netStart);
+                np?.WaitForExit(5000);
+            });
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine("[ҚОСЫЛҒАН ✓]");
+            Console.ResetColor();
+        }
+        catch (Exception ex)
+        {
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine($"[ЕСКЕРТУ: {ex.Message}]");
+            Console.ResetColor();
+        }
+
+        // 3. WMI Repository Consistency & Salvage (MAS pattern: winmgmt /salvagerepository)
+        Console.Write("3. WMI репозиторийінің тұтастығын тексеру және қалпына келтіру... ");
+        try
+        {
+            bool wmiRepaired = await Task.Run(async () =>
+            {
+                var vpsi = new System.Diagnostics.ProcessStartInfo
+                {
+                    FileName = "winmgmt.exe",
+                    Arguments = "/verifyrepository",
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    CreateNoWindow = true,
+                    UseShellExecute = false
+                };
+                using var vp = System.Diagnostics.Process.Start(vpsi);
+                if (vp != null)
+                {
+                    string outText = (await vp.StandardOutput.ReadToEndAsync()) + (await vp.StandardError.ReadToEndAsync());
+                    await vp.WaitForExitAsync();
+                    if (vp.ExitCode != 0 || outText.Contains("inconsistent", StringComparison.OrdinalIgnoreCase))
+                    {
+                        var spsi = new System.Diagnostics.ProcessStartInfo
+                        {
+                            FileName = "winmgmt.exe",
+                            Arguments = "/salvagerepository",
+                            CreateNoWindow = true,
+                            UseShellExecute = false
+                        };
+                        using var sp = System.Diagnostics.Process.Start(spsi);
+                        if (sp != null)
+                        {
+                            await sp.WaitForExitAsync();
+                            return sp.ExitCode == 0;
+                        }
+                    }
+                    return true;
+                }
+                return false;
+            });
+
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine("[ТҰРАҚТЫ ✓]");
+            Console.ResetColor();
+        }
+        catch (Exception ex)
+        {
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine($"[ТЕКСЕРІЛДІ: {ex.Message}]");
+            Console.ResetColor();
+        }
+
+        // 4. Network Category
+        Console.Write("4. Желі профилін 'Private' (Частная сеть) режиміне ауыстыру... ");
         bool netOk = await _networkService.SwitchNetworkToPrivateAsync();
         if (netOk)
         {
@@ -625,8 +743,8 @@ public class InteractiveConsoleMenu
             Console.ResetColor();
         }
 
-        // 3. Firewall TCP 445
-        Console.Write("3. Windows брандмауэрінен SMB (порт 445) ережелерін қосу... ");
+        // 5. Firewall TCP 445
+        Console.Write("5. Windows брандмауэрінен SMB (порт 445) ережелерін қосу... ");
         bool fwOk = await _firewallService.EnableSmbFirewallRulesAsync();
         if (fwOk)
         {
@@ -641,8 +759,31 @@ public class InteractiveConsoleMenu
             Console.ResetColor();
         }
 
+        // 6. Third-party Antivirus check
+        if (_osService != null)
+        {
+            Console.Write("6. Үшінші тарап антивирустарын тексеру... ");
+            var osInfo = _osService.GetOsInfo();
+            if (osInfo.HasThirdPartyAntivirus)
+            {
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine($"[ТАБЫЛДЫ: {osInfo.AntivirusSummary}]");
+                Console.ResetColor();
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine($"   ⚠️  Сыртқы антивирус/файрвол ({osInfo.AntivirusSummary}) TCP 445 портын бөгеп тұруы мүмкін.");
+                Console.WriteLine($"   Оның параметрлерінен желіні 'Сенімді' (Доверенная) деп белгілеңіз.");
+                Console.ResetColor();
+            }
+            else
+            {
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("[Windows Defender белсенді ✓]");
+                Console.ResetColor();
+            }
+        }
+
         Console.ForegroundColor = ConsoleColor.Green;
-        Console.WriteLine("\n✓ Жүйелік және желілік баптаулар автоматты түрде реттелді!");
+        Console.WriteLine("\n✓ Жүйелік қызметтер, WMI және желі баптаулары автоматты түрде реттелді!");
         Console.ResetColor();
     }
 

@@ -96,7 +96,61 @@ public static class RemediationAdvisor
             };
         }
 
-        // 4. Firewall / SMB Port 445 blocked
+        // 4. Third-party Antivirus / Firewall Interception (Checked before generic Windows Firewall)
+        if (combined.Contains("Kaspersky", StringComparison.OrdinalIgnoreCase) ||
+            combined.Contains("ESET", StringComparison.OrdinalIgnoreCase) ||
+            combined.Contains("Bitdefender", StringComparison.OrdinalIgnoreCase) ||
+            combined.Contains("Norton", StringComparison.OrdinalIgnoreCase) ||
+            combined.Contains("Avast", StringComparison.OrdinalIgnoreCase) ||
+            combined.Contains("Dr.Web", StringComparison.OrdinalIgnoreCase) ||
+            combined.Contains("Сторонний сетевой экран", StringComparison.OrdinalIgnoreCase))
+        {
+            return new RemediationReport
+            {
+                CategoryKey = "THIRD_PARTY_AV",
+                CategoryName = "Сыртқы антивирус / Брандмауэр (Third-Party AV)",
+                FailurePoint = "Сыртқы антивирустың дербес желілік экраны",
+                ErrorTitle = "Сыртқы антивирус немесе файрвол SMB порттарын (TCP 445) бұғаттауда",
+                CauseDescription = "Орнатылған сыртқы антивирус (Kaspersky, ESET, Bitdefender және т.б.) өзінің дербес файрволы арқылы Windows брандмауэрінен тыс желілік портты жауып тастайды.",
+                RemediationSteps = new List<string>
+                {
+                    "Антивирус бағдарламасын ашып, 'Сетевой экран' (Брандмауэр) бөліміне өтіңіз.",
+                    "Ағымдағы локалды желі байланысын 'Доверенная сеть' (Сенімді желі) немесе 'Локальная сеть' күйіне ауыстырыңыз.",
+                    "TCP 445 порты үшін кіріс пакеттерге рұқсат ережесін қосыңыз."
+                },
+                QuickCommand = null,
+                CanAutoFix = false
+            };
+        }
+
+        // 5. WMI / CIM Repository Corruption (MAS pattern)
+        if (combined.Contains("WMI", StringComparison.OrdinalIgnoreCase) ||
+            combined.Contains("winmgmt", StringComparison.OrdinalIgnoreCase) ||
+            combined.Contains("inconsistent", StringComparison.OrdinalIgnoreCase) ||
+            combined.Contains("ManagementException", StringComparison.OrdinalIgnoreCase) ||
+            combined.Contains("0x800410", StringComparison.OrdinalIgnoreCase) ||
+            combined.Contains("0x800440", StringComparison.OrdinalIgnoreCase))
+        {
+            return new RemediationReport
+            {
+                CategoryKey = "WMI_CORRUPTION",
+                CategoryName = "WMI репозиторийі (Windows Management Instrumentation)",
+                FailurePoint = "Windows WMI / CIM жүйесі",
+                ErrorTitle = "WMI репозиторийі зақымдалған немесе Winmgmt қызметі істен шыққан",
+                CauseDescription = "Windows жүйесінде WMI (Windows Management Instrumentation) деректер базасы зақымдалғандықтан, PowerShell және CIM арқылы SMB ресурстарын сұрау немесе басқару сәтсіз аяқталуда.",
+                RemediationSteps = new List<string>
+                {
+                    "Әкімшілік терезеде 'winmgmt /salvagerepository' пәрменін орындап, деректер қорын қалпына келтіріңіз.",
+                    "Егер репозиторий қалпына келмесе, 'winmgmt /resetrepository' қолданыңыз.",
+                    "'Winmgmt' қызметінің қосылып тұрғанын және авто-іске қосылуын тексеріңіз (sc config Winmgmt start= auto)."
+                },
+                QuickCommand = "winmgmt /salvagerepository",
+                CanAutoFix = true,
+                AutoFixDescription = "WMI репозиторийін автоматты түрде қалпына келтіру (winmgmt /salvagerepository)"
+            };
+        }
+
+        // 6. Firewall / SMB Port 445 blocked
         if (combined.Contains("Firewall", StringComparison.OrdinalIgnoreCase) ||
             combined.Contains("Брандмауэр", StringComparison.OrdinalIgnoreCase) ||
             combined.Contains("445", StringComparison.OrdinalIgnoreCase))
@@ -119,7 +173,7 @@ public static class RemediationAdvisor
             };
         }
 
-        // 5. System Directory Forbidden (Windows, System32)
+        // 7. System Directory Forbidden (Windows, System32)
         if (combined.Contains("System32", StringComparison.OrdinalIgnoreCase) ||
             combined.Contains("каталогу Windows", StringComparison.OrdinalIgnoreCase) ||
             combined.Contains("системному каталогу", StringComparison.OrdinalIgnoreCase))

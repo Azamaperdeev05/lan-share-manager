@@ -37,6 +37,16 @@ if (-not $args) {
         Write-Host
     }
 
+    # MAS Elevation Check Pattern: WindowsPrincipal IsInRole + fltmc.exe fallback
+    function Test-IsAdmin {
+        try {
+            return ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
+        } catch {
+            $null = fltmc.exe 2>&1
+            return ($LASTEXITCODE -eq 0)
+        }
+    }
+
     # 1. Check PowerShell Language Mode
     if ($ExecutionContext.SessionState.LanguageMode.value__ -ne 0) {
         Show-RemediationBox `
@@ -84,6 +94,24 @@ if (-not $args) {
     }
     Check3rdPartyAV
 
+    # 4. Check WMI Repository integrity (MAS pattern: winmgmt /verifyrepository)
+    function CheckWmiRepository {
+        try {
+            $wmiCheck = winmgmt.exe /verifyrepository 2>&1
+            if ($LASTEXITCODE -ne 0 -or $wmiCheck -like '*inconsistent*') {
+                Write-Host 'WMI Repository warning: WMI repository is inconsistent or corrupted.' -ForegroundColor Yellow
+                Write-Host 'Attempting auto-salvage (winmgmt /salvagerepository)... ' -NoNewline
+                $null = winmgmt.exe /salvagerepository 2>&1
+                if ($LASTEXITCODE -eq 0) {
+                    Write-Host 'Salvaged ✓' -ForegroundColor Green
+                } else {
+                    Write-Host 'Notice (run as Administrator to repair WMI)' -ForegroundColor Yellow
+                }
+            }
+        } catch {}
+    }
+    CheckWmiRepository
+
     # 4. Check for CMD AutoRun registry entries (could crash subprocesses)
     $autorunPaths = @('HKCU:\SOFTWARE\Microsoft\Command Processor', 'HKLM:\SOFTWARE\Microsoft\Command Processor')
     foreach ($path in $autorunPaths) {
@@ -98,11 +126,11 @@ if (-not $args) {
     } catch {}
 
     # 5. Pinned SHA-256 Hash and Mirrors
-    $expectedHash = '87705F9BA7E4FBD60690B9B4B4C1C0AA4737F1CF17F0C45EA545547AF5597D33'
+    $expectedHash = 'E7D81B9D1EE9EAD8F02E6FCA25F25D58EDC349C1773A10E37485561D343F031A'
 
     $mirrors = @(
-        'https://github.com/Azamaperdeev05/lan-share-manager/releases/download/v1.0.0/LANShareManager-v1.0.0-win-x64.zip',
-        'https://raw.githubusercontent.com/Azamaperdeev05/lan-share-manager/main/publish/LANShareManager-v1.0.0-win-x64.zip'
+        'https://github.com/Azamaperdeev05/lan-share-manager/releases/download/v1.1.0/LANShareManager-v1.1.0-win-x64.zip',
+        'https://raw.githubusercontent.com/Azamaperdeev05/lan-share-manager/main/publish/LANShareManager-v1.1.0-win-x64.zip'
     )
 
     $rand = [Guid]::NewGuid().Guid
@@ -266,7 +294,7 @@ if (-not $args) {
                 Write-Host "OK (Downloaded)" -ForegroundColor Green
 
                 Write-Host "Installing .NET 8 Desktop Runtime (please wait)... " -NoNewline
-                $isAdmin = [bool]([Security.Principal.WindowsIdentity]::GetCurrent().Groups -match 'S-1-5-32-544')
+                $isAdmin = Test-IsAdmin
                 if ($isAdmin) {
                     $installProc = Start-Process -FilePath $dotnetInstaller -ArgumentList '/install /quiet /norestart' -PassThru -Wait
                 } else {
@@ -286,7 +314,7 @@ if (-not $args) {
         }
 
         # 8. Interactive Mode Selector or Direct Launch
-        $isAdmin = [bool]([Security.Principal.WindowsIdentity]::GetCurrent().Groups -match 'S-1-5-32-544')
+        $isAdmin = Test-IsAdmin
         $launchMode = 'GUI'
 
         if ($args -contains '-cli' -or $args -contains '--cli' -or $args -contains '-menu' -or $args -contains '--menu') {

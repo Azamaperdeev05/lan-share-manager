@@ -18,6 +18,7 @@ using LANShareManager.Infrastructure.Logging;
 using LANShareManager.Infrastructure.Network;
 using LANShareManager.Infrastructure.NTFS;
 using LANShareManager.Infrastructure.Orchestration;
+using LANShareManager.Infrastructure.OS;
 using LANShareManager.Infrastructure.Process;
 using LANShareManager.Infrastructure.SMB;
 using Microsoft.Win32;
@@ -31,6 +32,7 @@ public partial class MainWindow : Window
     private readonly INtfsPermissionService _ntfsService;
     private readonly IFirewallService _firewallService;
     private readonly INetworkService _networkService;
+    private readonly IOsService _osService;
     private readonly IDiagnosticsService _diagnosticsService;
     private readonly IShareOrchestrator _orchestrator;
     private readonly IShareConfigSerializer _serializer;
@@ -49,8 +51,9 @@ public partial class MainWindow : Window
         _ntfsService = new NtfsPermissionService(_logger, processRunner);
 #pragma warning restore CA1416
         _firewallService = new WindowsFirewallService(_logger, processRunner);
-        _networkService = new WindowsNetworkService(_logger, processRunner);
-        _diagnosticsService = new WindowsDiagnosticsService(_smbService, _ntfsService, _firewallService, _networkService, _logger);
+        _osService = new WindowsOsService(_logger);
+        _networkService = new WindowsNetworkService(_logger, processRunner, _osService);
+        _diagnosticsService = new WindowsDiagnosticsService(_smbService, _ntfsService, _firewallService, _networkService, _logger, _osService);
         _orchestrator = new ShareOrchestrator(_smbService, _ntfsService, _firewallService, _networkService, _diagnosticsService, _logger);
         _serializer = new ShareConfigSerializer();
 
@@ -114,6 +117,7 @@ public partial class MainWindow : Window
         {
             _currentNetworkInfo = await _networkService.GetNetworkInfoAsync();
             TxtComputerName.Text = _currentNetworkInfo.ComputerName;
+            TxtOsVersion.Text = _currentNetworkInfo.OsInfo?.FullDescription ?? "Windows";
             TxtLocalIp.Text = _currentNetworkInfo.LocalIPv4;
             TxtNetworkProfile.Text = _currentNetworkInfo.NetworkProfileDisplay;
 
@@ -456,6 +460,7 @@ public partial class MainWindow : Window
         TxtAppSub.Text = LocalizationService.GetString("AppSubtitle", lang);
 
         TxtHostLabel.Text = LocalizationService.GetString("HostName", lang);
+        TxtOsLabel.Text = LocalizationService.GetString("OsVersion", lang);
         TxtIpLabel.Text = LocalizationService.GetString("LocalIp", lang);
         TxtProfileLabel.Text = LocalizationService.GetString("NetworkProfile", lang);
 
